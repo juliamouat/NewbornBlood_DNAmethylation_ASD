@@ -1,0 +1,88 @@
+library(data.table)
+library(ggfortify)
+library(openxlsx)
+
+##Function to make PCA plot from smooth methylation values over DMRs
+SmoothMethPCAPlot <- function(file, sample_info, name){
+  x <- read.delim(file, header = TRUE, check.names = FALSE)
+  x <- x[,-1:-16]
+  t_x <- data.table::transpose(x)
+  colnames(t_x) <- rownames(x)
+  rownames(t_x) <- colnames(x)
+  sample_info <- read.xlsx(sample_info, rowNames = TRUE)
+  y <- merge(sample_info, t_x, by = 'row.names', all = FALSE)
+  PCA <- prcomp(y[,-1:-3], center = TRUE, scale. = TRUE)
+  plot <- autoplot(PCA, data = y, colour = "ASD_Diagnosis", frame = TRUE, frame.type = 'norm') +
+                   theme_classic() + 
+    theme(plot.background = element_rect(fill = "white"),
+          axis.text = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.x = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.y = element_text(color = "black", size = 12, family = "sans"),
+          axis.line = element_line(color = "black", linewidth = 0.2),
+          legend.position = "none")
+  pdf(file = name, width = 7, height = 6)
+  print(plot)
+  dev.off()
+  return(plot)
+}
+
+##Discovery Newborn Blood (CHDS) samples and DMRs ######################################
+setwd("/Smoothed methylation/CHDS")
+CHDSsamples_CHDS_DMRs_combined <- SmoothMethPCAPlot(file = "/CHDS /DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                     sample_info = "CHDS_SampleInfo.xlsx",
+                                                     name = "CHDS_SmoothMeth_SexCombined.pdf")
+CHDSsamples_CHDS_DMRs_females <- SmoothMethPCAPlot(file = "/CHDS /DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                     sample_info = "CHDS_SampleInfo.xlsx",
+                                                     name = "CHDS_SmoothMeth_Females.pdf")
+CHDSsamples_CHDS_DMRs_males <- SmoothMethPCAPlot(file = "/CHDS /DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                    sample_info = "CHDS_SampleInfo.xlsx",
+                                                    name = "CHDS_SmoothMeth_Males.pdf")
+
+##Replication Newborn Blood (ReCHARGE/ECHO) samples and DMRs ######################################
+setwd("/Smoothed methylation/ECHO")
+ECHOsamples_ECHO_DMRs_combined <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                     sample_info = "ECHO_SampleInfo.xlsx",
+                                                     name = "ECHO_SmoothMeth_SexCombined.pdf")
+ECHOsamples_ECHO_DMRs_females <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                     sample_info = "ECHO_SampleInfo.xlsx",
+                                                     name = "ECHO_SmoothMeth_Females.pdf")
+ECHOsamples_ECHO_DMRs_males <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                    sample_info = "ECHO_SampleInfo.xlsx",
+                                                    name = "ECHO_SmoothMeth_Males.pdf")
+
+
+### Cord Blood samples and DMRs ###########################################
+setwd("/Smoothed methylation/Cord Blood")
+CordSamples_CordDMRs_combined <- SmoothMethPCAPlot(file = "/CordBlood/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                      sample_info = "CordBlood_SampleInfo.xlsx",
+                                                      name = "CordBlood_SmoothMeth_SexCombined.pdf")
+CordSamples_CordDMRs_females <- SmoothMethPCAPlot(file = "/CordBlood/DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                   sample_info = "CordBlood_SampleInfo.xlsx",
+                                                   name = "CordBlood_SmoothMeth_Females.pdf")
+CordSamples_CordDMRs_males <- SmoothMethPCAPlot(file = "/CordBlood/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                   sample_info = "CordBlood_SampleInfo.xlsx",
+                                                   name = "CordBlood_SmoothMeth_Males.pdf")
+
+### Placenta samples and DMRs #########################################
+setwd("/Smoothed methylation/Placenta")
+PlacentaSamples_PlacentaDMRs_combined <- SmoothMethPCAPlot(file = "/Placenta/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                           sample_info = "Placenta_SampleInfo.xlsx",
+                                                           name = "Placenta_SmoothMeth_SexCombined.pdf")
+PlacentaSamples_PlacentaDMRs_females <- SmoothMethPCAPlot(file = "/Placenta/DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                            sample_info = "Placenta_SampleInfo.xlsx",
+                                                            name = "Placenta_SmoothMeth_Females.pdf")
+PlacentaSamples_PlacentaDMRs_males <- SmoothMethPCAPlot(file = "/Placenta/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                           sample_info = "Placenta_SampleInfo.xlsx",
+                                                           name = "Placenta_SmoothMeth_Males.pdf")
+
+### Cortex samples and DMRs ############################################
+setwd("/Smoothed methylation/Cortex")
+CortexSamples_CortexDMRs_combined <- SmoothMethPCAPlot(file = "/Cortex/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                        sample_info = "Cortex_SampleInfo.xlsx",
+                                                        name = "Cortex_SmoothMeth_SexCombined.pdf")
+CortexSamples_CortexDMRs_females <- SmoothMethPCAPlot(file = "/Cortex/DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                        sample_info = "Cortex_SampleInfo.xlsx",
+                                                        name = "Cortex_SmoothMeth_Females.pdf")
+CortexSamples_CortexDMRs_males <- SmoothMethPCAPlot(file = "/Cortex/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                       sample_info = "Cortex_SampleInfo.xlsx",
+                                                       name = "Cortex_SmoothMeth_Males.pdf")
