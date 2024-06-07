@@ -1,0 +1,90 @@
+#Discovery Newborn Blood (CHDS)
+call="Rscript \
+--vanilla \
+/share/lasallelab/programs/DMRichR/DM.R \
+--genome hg38 \
+--coverage 1 \
+--perGroup '0.9' \
+--minCpGs 5 \
+--maxPerms 10 \
+--maxBlockPerms 10 \
+--cutoff '0.05' \
+--testCovariate ASD_Diagnosis \
+--sexCheck FALSE \
+--GOfuncR TRUE \
+--EnsDb FALSE \
+--cellComposition FALSE \
+--cores 20"
+
+#Replication Newborn Blood (ReCHARGE/ECHO)
+call="Rscript \
+--vanilla \
+/share/lasallelab/programs/DMRichR/DM.R \
+--genome hg38 \
+--coverage 1 \
+--perGroup '1' \
+--minCpGs 5 \
+--maxPerms 10 \
+--maxBlockPerms 10 \
+--cutoff '0.05' \
+--testCovariate ASD_Diagnosis \
+--sexCheck FALSE \
+--GOfuncR TRUE \
+--EnsDb FALSE \
+--cellComposition FALSE \
+--cores 20"
+
+#Cord Blood
+call="Rscript \
+--vanilla \
+/share/lasallelab/programs/DMRichR/DM.R \
+--genome hg38 \
+--coverage 1 \
+--perGroup '0.84' \
+--minCpGs 5 \
+--maxPerms 10 \
+--maxBlockPerms 10 \
+--cutoff '0.05' \
+--testCovariate ASD_Diagnosis \
+--sexCheck FALSE \
+--GOfuncR TRUE \
+--EnsDb FALSE \
+--cellComposition FALSE \
+--cores 20"
+
+#Placenta
+call="Rscript \
+--vanilla \
+/share/lasallelab/programs/DMRichR/DM.R \
+--genome hg38 \
+--coverage 1 \
+--perGroup '0.9' \
+--minCpGs 5 \
+--maxPerms 10 \
+--maxBlockPerms 10 \
+--cutoff '0.05' \
+--testCovariate ASD_Diagnosis \
+--sexCheck TRUE \
+--GOfuncR TRUE \
+--EnsDb FALSE \
+--cellComposition FALSE \
+--cores 20"
+
+#Cortex
+call="Rscript \
+--vanilla \
+/share/lasallelab/programs/DMRichR/DM.R \
+--genome hg38 \
+--coverage 1 \
+--perGroup '1' \
+--minCpGs 5 \
+--maxPerms 10 \
+--maxBlockPerms 10 \
+--cutoff '0.05' \
+--testCovariate ASD_Diagnosis \
+--adjustCovariate Age \
+--sexCheck TRUE \
+--GOfuncR TRUE \
+--EnsDb FALSE \
+--cellComposition FALSE \
+--cores 20"
