@@ -1,0 +1,76 @@
+#Make density plot of methylation from all 4 tissues 
+#Use DMRichR Sex Combined comparison for each tissue to get the filtered bsseq object 
+
+screen -S DensityPlot
+
+module load R/4.1.0
+module load homer
+R
+
+.libPaths("/share/lasallelab/programs/DMRichR/R_4.1")
+AnnotationHub::setAnnotationHubOption("CACHE", "/share/lasallelab/programs/DMRichR/R_4.1")
+ExperimentHub::setExperimentHubOption("CACHE", "/share/lasallelab/programs/DMRichR/R_4.1")
+
+library(DMRichR)
+library(ggplot2)
+library(tidyr)
+
+setwd("/Tissue_Comparisons/DensityPlots")
+
+#Get bsseq means -- run for each tissue (discovery newborn blood, cord blood, placenta, cortex)
+load("bsseq.RData")
+bsseq <- CpGs(bs.filtered.bsseq)
+bsseq_means <- rowMeans(bsseq)
+bsseq_means_percent <- bsseq_means * 100
+plot <- ggplot(data = data.frame(x = bsseq_means_percent), aes(x=x)) + 
+    geom_density() +
+    labs(x = "Percent CpG Methylation", y = "Density") +
+    theme(panel.background = element_rect(fill = "white"),
+        panel.grid = element_line(color = "gray", linewidth = 0.2),
+        axis.text = element_text(color = "black", size = 12, family = "sans"),
+        axis.title.x = element_text(color = "black", size = 12, family = "sans"),
+        axis.title.y = element_text(color = "black", size = 12, family = "sans"),
+        axis.line = element_line(color = "black", size = 0.2))
+ggplot2::ggsave("Density_Plot.pdf", 
+        plot = plot,
+        width = 6, height = 2.4)
+
+#Combine bsseq_means vectors from each tissue into one data frame 
+all_tissue_means <- data.frame(
+  NewbornBlood = CHDS_bsseq_means_percent,
+  CordBlood = Cord_bsseq_means_percent,
+  Placenta = Placenta_bsseq_means_percent,
+  Cortex = Cortex_bsseq_means_percent
+)
+head(all_tissue_means)
+all_tissues_means_long <- gather(all_tissue_means, key = "Group", value = "Value")
+write.csv(all_tissues_means_long, "/Tissue_Comparisons/DensityPlots/AllTissues_Methylation_ggplot.csv")
+all_tissues_means_long$Group <- sub("NewbornBlood", "Newborn Blood", all_tissues_means_long$Group)
+all_tissues_means_long$Group <- sub("CordBlood", "Cord Blood", all_tissues_means_long$Group)
+
+#Make density plot with 4 lines (one for each tissue) 
+all_tissues_density_plot <- ggplot(data = all_tissues_means_long, aes(x = Value, color = Group)) + 
+  geom_density(linewidth = 1.1) +
+  labs(x = "Percent CpG Methylation", y = "Density") +
+  scale_color_manual(values = c("Discovery Newborn Blood" = "blue", "Cord Blood" = "red", "Placenta" = "orange", "Cortex" = "green"), 
+                     limits = c("Discovery Newborn Blood", "Cord Blood", "Placenta", "Cortex")) +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.text = element_text(color = "black", size = 10, family = "sans"),
+        axis.title.x = element_text(color = "black", size = 10, family = "sans"),
+        axis.title.y = element_text(color = "black", size = 10, family = "sans"),
+        axis.line = element_line(color = "black"), 
+        legend.position = "bottom") +
+  guides(color = guide_legend(title = element_blank()))
+
+ggplot2::ggsave("/DensityPlots/AllTissues_Density_Plot2.pdf", 
+                plot = all_tissues_density_plot,
+                width = 6, height = 3)
+
+
+
+
+
+
+
+
+
