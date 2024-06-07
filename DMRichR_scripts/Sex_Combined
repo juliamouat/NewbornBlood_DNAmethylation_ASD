@@ -1,0 +1,20 @@
+#Discovery Newborn Blood
+call="nohup \
+Rscript \
+--vanilla \
+/share/lasallelab/programs/DMRichR/ \
+--genome hg38 \
+--coverage 1 \
+--perGroup '0.14' \
+--minCpGs 5 \
+--maxPerms 10 \
+--maxBlockPerms 10 \
+--cutoff '0.05' \
+--testCovariate ASD_Diagnosis \
+--adjustCovariate 'Sex' \
+--sexCheck FALSE \
+--GOfuncR TRUE \
+--cores 20 \
+--EnsDb FALSE
+--cellComposition TRUE \
+> DMRichR.log 2>&1 &"
