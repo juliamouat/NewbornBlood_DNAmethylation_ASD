@@ -86,3 +86,62 @@ CortexSamples_CortexDMRs_females <- SmoothMethPCAPlot(file = "/Cortex/DMRichR/Fe
 CortexSamples_CortexDMRs_males <- SmoothMethPCAPlot(file = "/Cortex/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
                                                        sample_info = "Cortex_SampleInfo.xlsx",
                                                        name = "Cortex_SmoothMeth_Males.pdf")
+
+# Supplemental Figure 2C #############################################################################
+##Function to separate samples by sex (from Sex Combined analyses) instead of ASD Diagnosis
+SmoothMethPCAPlot2_Sex <- function(file, sample_info, name){
+  x <- read.delim(file, header = TRUE, check.names = FALSE)
+  x <- x[,-1:-16]
+  t_x <- data.table::transpose(x)
+  colnames(t_x) <- rownames(x)
+  rownames(t_x) <- colnames(x)
+  sample_info <- read.xlsx(sample_info, rowNames = TRUE)
+  y <- merge(sample_info, t_x, by = 'row.names', all = FALSE)
+  PCA <- prcomp(y[,-1:-3], center = TRUE, scale. = TRUE)
+  plot <- autoplot(PCA, data = y, colour = "Sex", frame = TRUE, frame.type = 'norm') +
+    theme_classic() + 
+    theme(plot.background = element_rect(fill = "white"),
+          axis.text = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.x = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.y = element_text(color = "black", size = 12, family = "sans"),
+          axis.line = element_line(color = "black", linewidth = 0.2),
+          legend.position = "none") +
+    scale_fill_manual(values = c("#FFCF60", "#6373B7")) +
+    scale_color_manual(values = c("#FFCF60", "#6373B7"))
+  pdf(file = name, width = 7, height = 6)
+  print(plot)
+  dev.off()
+  return(plot)
+}
+
+
+##CHDS samples and CHDS DMRs ######################################
+setwd("/CHDS /Smoothed methylation/CHDS")
+#CHDS Sex Combined
+CHDSsamples_CHDS_DMRs_combined <- SmoothMethPCAPlot2_Sex(file = "/CHDS /DMRichR/SexCombined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                     sample_info = "CHDS_SampleInfo.xlsx",
+                                                     name = "CHDS_SmoothMeth_SexCombined_Sex.pdf")
+
+
+### Cord Blood samples and Cord Blood DMRs ###########################################
+setwd("/CHDS /Smoothed methylation/Cord Blood")
+#Cord Blood Sex Combined 
+CordSamples_CordDMRs_combined <- SmoothMethPCAPlot2_Sex(file = "/CHDS /CordBlood/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                    sample_info = "CordBlood_SampleInfo.xlsx",
+                                                    name = "CordBlood_SmoothMeth_SexCombined_Sex.pdf")
+
+
+### Placenta samples and Placenta DMRs #########################################
+setwd("/CHDS /Smoothed methylation/Placenta")
+#Placenta Sex Combined
+PlacentaSamples_PlacentaDMRs_combined <- SmoothMethPCAPlot2_Sex(file = "/CHDS /Placenta/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                            sample_info = "Placenta_SampleInfo.xlsx",
+                                                            name = "Placenta_SmoothMeth_SexCombined_Sex.pdf")
+
+### Cortex samples and Cortex DMRs ############################################
+setwd("/CHDS /Smoothed methylation/Cortex")
+#Cortex Sex Combined
+CortexSamples_CortexDMRs_combined <- SmoothMethPCAPlot2_Sex(file = "/CHDS /Cortex/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                        sample_info = "Cortex_SampleInfo.xlsx",
+                                                        name = "Cortex_SmoothMeth_SexCombined_Sex.pdf")
+
