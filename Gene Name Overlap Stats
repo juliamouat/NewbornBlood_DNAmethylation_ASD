@@ -1,0 +1,179 @@
+#Gene Name Overlap Stats
+
+#Assign Gene Names to Universe (bsseq_background.csv) to use as background for GeneNameOverlap function
+
+module load R/4.1.0
+module load homer
+R
+.libPaths("/share/lasallelab/programs/DMRichR/R_4.1")
+AnnotationHub::setAnnotationHubOption("CACHE", value = "/share/lasallelab/programs/DMRichR/R_4.1")
+library(DMRichR)
+library(GenomicRanges)
+library(GeneOverlap)
+library(openxlsx)
+library(regioneR)
+annotationDatabases(genome = "hg38", EnsDb = FALSE)
+
+## Function to assign gene names to universe
+setwd("")
+Universe <- read.csv("Extra/bsseq_background.csv")
+Universe_GRanges <- makeGRangesFromDataFrame(Universe)
+DMRichR::annotateRegions(regions = Universe_GRanges, TxDb = TxDb,
+                         annoDb = annoDb) %>% 
+  openxlsx::write.xlsx(file = "Extra/bsseq_background_annotated.xlsx")
+
+###########################################################################################################################
+
+#Load Data #############################
+# Discovery Newborn Blood (CHDS) DMR Genes
+CHDS_Combined_DMR_Genes <- read.xlsx("/CHDS /DMRichR/SexCombined/DMRs/DMRs_annotated.xlsx")
+CHDS_Females_DMR_Genes <- read.xlsx("/CHDS /DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+CHDS_Males_DMR_Genes <- read.xlsx("/CHDS /DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Discovery Newborn Blood (CHDS) Universe Genes
+CHDS_Combined_Universe_Genes <- read.xlsx("/CHDS /DMRichR/SexCombined/Extra/bsseq_background_annotated.xlsx")
+CHDS_Females_Universe_Genes <- read.xlsx("/CHDS /DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+CHDS_Males_Universe_Genes <- read.xlsx("/CHDS /DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+# Replication Newborn Blood (ReCHARGE/ECHO) DMR Genes
+ECHO_Combined_DMR_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+ECHO_Males_DMR_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+ECHO_Females_DMR_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+
+# Replication Newborn Blood (ReCHARGE/ECHO) Universe Genes
+ECHO_Combined_Universe_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+ECHO_Males_Universe_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+ECHO_Females_Universe_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+
+# Cord Blood DMR Genes
+Cord_Combined_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+Cord_Females_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Cord_Males_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Cord Blood Universe Genes 
+Cord_Combined_Universe_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+Cord_Females_Universe_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+Cord_Males_Universe_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+# Placenta DMR Genes
+Placenta_Combined_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+Placenta_Females_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Placenta_Males_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Placenta Universe Genes
+Placenta_Combined_Universe_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+Placenta_Females_Universe_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+Placenta_Males_Universe_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+# Cortex DMR Genes  
+Cortex_Combined_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+Cortex_Females_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Cortex_Males_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Cortex Universe Genes 
+Cortex_Combined_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+Cortex_Females_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+Cortex_Males_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+#Gene Overlap Stats ####################################################################################################
+
+DMRGeneNameOverlap <- function(A, B, C, D){
+  overlap <- newGeneOverlap(listA = A$geneSymbol, listB = B$geneSymbol, genome.size = (length(Reduce(intersect, list(C$geneSymbol, D$geneSymbol)))))
+  stats <- testGeneOverlap(overlap)
+  list <- list(stats@Jaccard, stats@odds.ratio, stats@pval)
+  return(list)
+}
+
+# Supplemental Table 20: NDBS Replication ##############################
+setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/NDBS Replication")
+
+NDBS_Replication_Combined <- DMRGeneNameOverlap(A = CHDS_Combined_DMR_Genes, B = ECHO_Combined_DMR_Genes, C = CHDS_Combined_Universe_Genes, D = ECHO_Combined_Universe_Genes)
+NDBS_Replication_Females <- DMRGeneNameOverlap(A = CHDS_Females_DMR_Genes, B = ECHO_Females_DMR_Genes, C = CHDS_Females_Universe_Genes, D = ECHO_Females_Universe_Genes)
+NDBS_Replication_Males <- DMRGeneNameOverlap(A = CHDS_Males_DMR_Genes, B = ECHO_Males_DMR_Genes,C = CHDS_Males_Universe_Genes, D = ECHO_Males_Universe_Genes)
+
+StatsDataFrame3 <- function(L1, L2, L3, ColumnNames, file){
+  RowNames <- list("Jaccard Index", "Odds Ratio", "P Value")
+  DataFrame <- data.frame(unlist(x = RowNames), unlist(x = L1), unlist(x = L2), unlist(x = L3))
+  colnames(DataFrame) <- ColumnNames
+  write.xlsx(DataFrame, file = file)
+  return(DataFrame)
+}
+
+StatsDataFrame3(NDBS_Replication_Combined, NDBS_Replication_Females, NDBS_Replication_Males,
+               ColumnNames = c("", "Combined", "Females", "Males"),
+               file = "NDBS_Replication_GeneName_Overlap_Stats.xlsx")
+
+# Supplemental Table 13: Females x Males for each tissue ################
+setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Females x Males")
+
+CHDS_Female_Male <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes, CHDS_Males_DMR_Genes, CHDS_Females_Universe_Genes, CHDS_Males_Universe_Genes)
+ECHO_Female_Male <- DMRGeneNameOverlap(ECHO_Females_DMR_Genes, ECHO_Males_DMR_Genes, ECHO_Females_Universe_Genes, ECHO_Males_Universe_Genes)
+Cord_Female_Male <- DMRGeneNameOverlap(Cord_Females_DMR_Genes, Cord_Males_DMR_Genes, Cord_Females_Universe_Genes, Cord_Males_Universe_Genes)
+Placenta_Female_Male <- DMRGeneNameOverlap(Placenta_Females_DMR_Genes, Placenta_Males_DMR_Genes, Placenta_Females_Universe_Genes, Placenta_Males_Universe_Genes)
+Cortex_Female_Male <- DMRGeneNameOverlap(Cortex_Females_DMR_Genes, Cortex_Males_DMR_Genes, Cortex_Females_Universe_Genes, Cortex_Males_Universe_Genes)
+
+StatsDataFrame5 <- function(L1, L2, L3, L4, L5, ColumnNames, file){
+  RowNames <- list("Jaccard Index", "Odds Ratio", "P Value")
+  DataFrame <- data.frame(unlist(x = RowNames), unlist(x = L1), unlist(x = L2), unlist(x = L3), unlist(x = L4), unlist(x = L5))
+  colnames(DataFrame) <- ColumnNames
+  write.xlsx(DataFrame, file = file)
+  return(DataFrame)
+}
+
+StatsDataFrame5(L1 = CHDS_Female_Male, L2 = ECHO_Female_Male, L3 = Cord_Female_Male, L4 = Placenta_Female_Male, L5 = Cortex_Female_Male,
+               ColumnNames = c("","CHDS", "ECHO", "Cord Blood", "Placenta", "Cortex"),
+               file = "Female_Male_GeneName_Overlap_Stats.xlsx")
+
+
+# Supplemental Table 21: Tissue Comparisons #############################################################################################
+
+StatsDataFrame6 <- function(L1, L2, L3, L4, L5, L6, ColumnNames, file){
+  RowNames <- list("Jaccard Index", "Odds Ratio", "P Value")
+  DataFrame <- data.frame(unlist(x = RowNames), unlist(x = L1), unlist(x = L2), unlist(x = L3), unlist(x = L4), unlist(x = L5), unlist(x = L6))
+  colnames(DataFrame) <- ColumnNames
+  write.xlsx(DataFrame, file = file)
+  return(DataFrame)
+}
+
+# Sex Combined Tissue Comparisons ####################################
+setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Sex Combined Tissue Comparisons")
+
+CHDS_Cord_Combined <- DMRGeneNameOverlap(CHDS_Combined_DMR_Genes, Cord_Combined_DMR_Genes,CHDS_Combined_Universe_Genes, Cord_Combined_Universe_Genes)
+CHDS_Placenta_Combined <- DMRGeneNameOverlap(CHDS_Combined_DMR_Genes, Placenta_Combined_DMR_Genes,CHDS_Combined_Universe_Genes, Placenta_Combined_Universe_Genes)
+CHDS_Cortex_Combined <- DMRGeneNameOverlap(CHDS_Combined_DMR_Genes, Cortex_Combined_DMR_Genes,CHDS_Combined_Universe_Genes, Cortex_Combined_Universe_Genes)
+Cord_Placenta_Combined <- DMRGeneNameOverlap(Cord_Combined_DMR_Genes, Placenta_Combined_DMR_Genes,Cord_Combined_Universe_Genes, Placenta_Combined_Universe_Genes)
+Cord_Cortex_Combined <- DMRGeneNameOverlap(Cord_Combined_DMR_Genes, Cortex_Combined_DMR_Genes, Cord_Combined_Universe_Genes, Cortex_Combined_Universe_Genes)
+Placenta_Cortex_Combined <- DMRGeneNameOverlap(Placenta_Combined_DMR_Genes, Cortex_Combined_DMR_Genes, Placenta_Combined_Universe_Genes, Cortex_Combined_Universe_Genes)
+
+StatsDataFrame6(L1 = CHDS_Cord_Combined, L2 = CHDS_Placenta_Combined, L3 = CHDS_Cortex_Combined, L4 = Cord_Placenta_Combined, L5 = Cord_Cortex_Combined, L6 = Placenta_Cortex_Combined,
+               ColumnNames = c("", "NewbornBlood_Cord", "NewbornBlood_Placenta", "NewbornBlood_Cortex", "Cord_Placenta", "Cord_Cortex", "Placenta_Cortex"),
+               file = "Combined_Tissue_Comparisons_GeneName_Overlap_Stats.xlsx")
+
+# Females Tissue Comparisons ####################################
+setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Female Tissue Comparisons")
+
+CHDS_Cord_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes_V2, Cord_Females_DMR_Genes_V1,CHDS_Females_Universe_Genes_V2, Cord_Females_Universe_Genes_V1)
+CHDS_Placenta_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes_V2, Placenta_Females_DMR_Genes_V1,CHDS_Females_Universe_Genes_V2, Placenta_Females_Universe_Genes_V1)
+CHDS_Cortex_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes_V2, Cortex_Females_DMR_Genes_V2,CHDS_Females_Universe_Genes_V2, Cortex_Females_Universe_Genes_V2)
+Cord_Placenta_Female <- DMRGeneNameOverlap(Cord_Females_DMR_Genes_V1, Placenta_Females_DMR_Genes_V1, Cord_Females_Universe_Genes_V1, Placenta_Females_Universe_Genes_V1)
+Cord_Cortex_Female <- DMRGeneNameOverlap(Cord_Females_DMR_Genes_V1, Cortex_Females_DMR_Genes_V2, Cord_Females_Universe_Genes_V1, Cortex_Females_Universe_Genes_V2)
+Placenta_Cortex_Female <- DMRGeneNameOverlap(Placenta_Females_DMR_Genes_V1, Cortex_Females_DMR_Genes_V2, Placenta_Females_Universe_Genes_V1, Cortex_Females_Universe_Genes_V2)
+
+StatsDataFrame6(L1 = CHDS_Cord_Female, L2 = CHDS_Placenta_Female, L3 = CHDS_Cortex_Female, L4 = Cord_Placenta_Female, L5 = Cord_Cortex_Female, L6 = Placenta_Cortex_Female,
+               ColumnNames = c("", "NewbornBlood_Cord", "NewbornBlood_Placenta", "NewbornBlood_Cortex", "Cord_Placenta", "Cord_Cortex", "Placenta_Cortex"),
+               file = "Female_Tissue_Comparisons_GeneName_Overlap_Stats.xlsx")
+
+# Males Tissue Comparisons  ####################################
+setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Male Tissue Comparisons")
+
+CHDS_Cord_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes_V7, Cord_Males_DMR_Genes_V1,CHDS_Males_Universe_Genes_V7, Cord_Males_Universe_Genes_V1)
+CHDS_Placenta_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes_V7, Placenta_Males_DMR_Genes_V1,CHDS_Males_Universe_Genes_V7, Placenta_Males_Universe_Genes_V1)
+CHDS_Cortex_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes_V7, Cortex_Males_DMR_Genes_V3,CHDS_Males_Universe_Genes_V7, Cortex_Males_Universe_Genes_V3)
+Cord_Placenta_Male <- DMRGeneNameOverlap(Cord_Males_DMR_Genes_V1, Placenta_Males_DMR_Genes_V1, Cord_Males_Universe_Genes_V1, Placenta_Males_Universe_Genes_V1)
+Cord_Cortex_Male <- DMRGeneNameOverlap(Cord_Males_DMR_Genes_V1, Cortex_Males_DMR_Genes_V3, Cord_Males_Universe_Genes_V1, Cortex_Males_Universe_Genes_V3)
+Placenta_Cortex_Male <- DMRGeneNameOverlap(Placenta_Males_DMR_Genes_V1, Cortex_Males_DMR_Genes_V3, Placenta_Males_Universe_Genes_V1, Cortex_Males_Universe_Genes_V3)
+
+StatsDataFrame6(L1 = CHDS_Cord_Male, L2 = CHDS_Placenta_Male, L3 = CHDS_Cortex_Male, L4 = Cord_Placenta_Male, L5 = Cord_Cortex_Male, L6 = Placenta_Cortex_Male,
+               ColumnNames = c("", "NewbornBlood_Cord", "NewbornBlood_Placenta", "NewbornBlood_Cortex", "Cord_Placenta", "Cord_Cortex", "Placenta_Cortex"),
+               file = "Male_Tissue_Comparisons_GeneName_Overlap_Stats.xlsx")
+
