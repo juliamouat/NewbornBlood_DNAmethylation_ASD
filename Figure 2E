@@ -1,0 +1,35 @@
+#Figure 2E: What proportion of autosomal DMR genes from ASD females vs TD males and from TD females vs ASD males were also called as autosomal DMR genes in the ASD females vs ASD males comparison in discovery newborn blood (CHDS)?
+
+#Load Annotated DMRs from CHDS newborn blood 
+library(openxlsx)
+ASDfemalesASDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/ASDfemalesASDmales/V1/DMRs/DMRs_annotated.xlsx")
+ASDfemalesTDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/ASDfemalesTDmales/DMRs/DMRs_annotated.xlsx")
+TDfemalesASDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/TDfemalesASDmales/DMRs/DMRs_annotated.xlsx")
+
+#Remove all non-autosomal DMRs (chrX or chrY)
+ASDfemalesASDmales_DMRs_Annotated_Autosomes <- subset(ASDfemalesASDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+ASDfemalesTDmales_DMRs_Annotated_Autosomes <- subset(ASDfemalesTDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+TDfemalesASDmales_DMRs_Annotated_Autosomes <- subset(TDfemalesASDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+
+
+#Function to get unique number of genes that DMRs map to for each dataset ####################################################
+NumGenes <- function(x){
+  NumGenes <- length(unique(x$geneSymbol))
+  return(NumGenes)
+}
+
+#Find number of ASD female vs TD male autosomal DMR genes that were also called as ASD female vs ASD male autosomal DMR genes ##############
+#Get unique number of AUTOSOMAL genes that DMRs map to for each dataset
+NumGenes(ASDfemalesASDmales_DMRs_Annotated_Autosomes) #588
+NumGenes(ASDfemalesTDmales_DMRs_Annotated_Autosomes) #128
+#Get number of overlaps
+ASDfASDm_ASDfTDm_GeneOverlap <- Reduce(intersect, list(ASDfemalesASDmales_Unique_GeneNames, ASDfemalesTDmales_Unique_GeneNames))
+length(ASDfASDm_ASDfTDm_GeneOverlap) #120
+
+#Find number of TD female vs ASD male autosomal DMR genes that were also called as ASD female vs ASD male autosomal DMR genes ##############
+#Get unique number of AUTOSOMAL genes that DMRs map to for each dataset
+NumGenes(ASDfemalesASDmales_DMRs_Annotated_Autosomes) #588
+NumGenes(TDfemalesASDmales_DMRs_Annotated) #176
+#Get number of overlaps
+ASDfASDm_TDfASDm_GeneOverlap <- Reduce(intersect, list(ASDfemalesASDmales_Unique_GeneNames, TDfemalesASDmales_Unique_GeneNames))
+length(ASDfASDm_TDfASDm_GeneOverlap) #115
