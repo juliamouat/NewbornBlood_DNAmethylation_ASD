@@ -1,0 +1,56 @@
+library(bsseq)
+library(data.table)
+library(ggfortify)
+library(openxlsx)
+library(rtracklayer)
+
+.libPaths("/share/lasallelab/programs/comethyl/R_4.1.0/rtest")
+AnnotationHub::setAnnotationHubOption("CACHE", value = "/share/lasallelab/programs/comethyl/R_4.1.0/rtest")
+
+#Get Smooth Methylation values from all CHDS samples over Female vs Male DMRs ###########################################################
+
+#TD Females vs TD Males DMRs
+load("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/SexCombined/V1/RData/bsseq.RData")
+DMRs_TDfemales_TDmales <- rtracklayer::import.bed("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/MaleBrain_IncoherentGenderHypothesis/TDfemales_TDmales/DMRs/DMRs.bed")
+AllSamples_TDfemalesTDmaleDMRs <- getMeth(bs.filtered.bsseq, regions = DMRs_TDfemales_TDmales, type = "smooth", what = "perRegion")
+write.xlsx(as.data.frame(AllSamples_TDfemalesTDmaleDMRs), "CHDSsamples_SmoothMethylation_TDfemalesTDmalesDMRs.xlsx", rowNames = TRUE, colNames = TRUE)
+
+#ASD Females vs ASD Males DMRs
+load("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/SexCombined/V1/RData/bsseq.RData")
+DMRs_ASDfemales_ASDmales <- rtracklayer::import.bed("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/MaleBrain_IncoherentGenderHypothesis/ASDfemales_ASDmales/DMRs/DMRs.bed")
+AllSamples_ASDfemalesASDmaleDMRs <- getMeth(bs.filtered.bsseq, regions = DMRs_ASDfemales_ASDmales, type = "smooth", what = "perRegion")
+write.xlsx(as.data.frame(AllSamples_ASDfemalesASDmaleDMRs), "CHDSsamples_SmoothMethylation_ASDfemalesASDmalesDMRs.xlsx", rowNames = TRUE, colNames = TRUE)
+
+
+#Function to make PCA plot #############################################################
+SmoothMethPCAPlot <- function(file, name){
+  x <- openxlsx::read.xlsx(file)
+  x <- na.omit(x)
+  t_x <- data.table::transpose(x)
+  colnames(t_x) <- rownames(x)
+  rownames(t_x) <- colnames(x)
+  y <- merge(CHDS_Diagnosis_Sex, t_x, by = 'row.names', all = FALSE)
+  y_PCA <- y[,-c(1,2), drop = FALSE]
+  y_PCA_numeric <- as.data.frame(lapply(y[,-c(1,2)], as.numeric))
+  PCA <- prcomp(y_PCA_numeric, center = TRUE, scale. = TRUE)
+  plot <- autoplot(PCA, data = y, colour = "Group", frame = TRUE, frame.type = 'norm') +
+    theme_classic() + 
+    theme(plot.background = element_rect(fill = "white"),
+          axis.text = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.x = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.y = element_text(color = "black", size = 12, family = "sans"),
+          axis.line = element_line(color = "black", linewidth = 0.2),
+          legend.position = "right")
+  pdf(file = name, width = 7, height = 6)
+  print(plot)
+  dev.off()
+  return(plot)
+}
+
+# PCA plot of smooth methylation values of all CHDS samples over TD female v TD male DMRs
+CHDS_SmoothMeth_TDfemalesTDmalesDMRs <- SmoothMethPCAPlot(file = "CHDSsamples_SmoothMethylation_TDfemalesTDmalesDMRs.xlsx",
+                                      name = "CHDSsamples_SmoothMethylation_TDfemalesTDmalesDMRs_PCA.pdf")
+
+# PCA plot of smooth methylation values of all CHDS samples over ASD female v ASD male DMRs
+CHDS_SmoothMeth_ASDfemalesASDmalesDMRs <- SmoothMethPCAPlot(file = "CHDSsamples_SmoothMethylation_ASDfemalesASDmalesDMRs.xlsx",
+                                                          name = "CHDSsamples_SmoothMethylation_ASDfemalesASDmalesDMRs_PCA.pdf")
