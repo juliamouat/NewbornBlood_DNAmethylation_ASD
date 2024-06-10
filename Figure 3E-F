@@ -1,0 +1,156 @@
+#Load Data
+# Newborn Blood Data ###################
+
+# Discovery Newborn Blood (CHDS) DMRs
+CHDS_Males_DMRs <- import("/CHDS /DMRichR/Males/DMRs/DMRs.bed")
+CHDS_Females_DMRs <- import("/CHDS /DMRichR/Females/DMRs/DMRs.bed")
+
+# Replication Newborn Blood (ReCHARGE/ECHO) DMRs
+ECHO_Males_DMRs <- import("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Males/DMRs/DMRs.bed")
+ECHO_Females_DMRs <- import("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Females/DMRs/DMRs.bed")
+
+# Discovery Newborn Blood (CHDS) Universe
+CHDS_Males_Universe <- read.csv("/CHDS /DMRichR/Males/Extra/bsseq_background.csv")
+CHDS_Females_Universe <- read.csv("/CHDS /DMRichR/Females/Extra/bsseq_background.csv")
+
+# Replication Newborn Blood (ReCHARGE/ECHO) Universe
+ECHO_Males_Universe <- read.csv("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Males/Extra/bsseq_background.csv")
+ECHO_Females_Universe <- read.csv("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Females/Extra/bsseq_background.csv")
+
+#Cord Blood Data ###########################
+
+# Cord Blood DMRs
+Cord_Females_DMRs <- import("/CHDS /CordBlood/DMRichR/Females/DMRs/DMRs.bed")
+Cord_Males_DMRs <- import("/CHDS /CordBlood/DMRichR/Males/DMRs/DMRs.bed")
+
+# Cord Blood Universe
+Cord_Females_Universe <- read.csv("/CHDS /CordBlood/DMRichR/Females/Extra/bsseq_background.csv")
+Cord_Males_Universe <- read.csv("/CHDS /CordBlood/DMRichR/Males/Extra/bsseq_background.csv")
+
+
+# Placenta Data ########################
+
+# Placenta DMRs
+Placenta_Females_DMRs <- import("/CHDS /Placenta/DMRichR/Females/DMRs/DMRs.bed")
+Placenta_Males_DMRs <- import("/CHDS /Placenta/DMRichR/Males/DMRs/DMRs.bed")
+
+#Discovery Universe
+Placenta_Females_Universe <- read.csv("/CHDS /Placenta/DMRichR/Females/Extra/bsseq_background.csv")
+Placenta_Males_Universe <- read.csv("/CHDS /Placenta/DMRichR/Males/Extra/bsseq_background.csv")
+
+# Cortex Data ##########################
+
+#Discovery DMRs
+Cortex_Males_DMRs <- import("/CHDS /Cortex/DMRichR/Males/DMRs/DMRs.bed")
+Cortex_Females_DMRs <- import("/CHDS /Cortex/DMRichR/Females/DMRs/DMRs.bed")
+
+#Discovery Universe
+Cortex_Males_Universe <- read.csv("/CHDS /Cortex/DMRichR/Males/Extra/bsseq_background.csv")
+Cortex_Females_Universe <- read.csv("/CHDS /Cortex/DMRichR/Females/Extra/bsseq_background.csv")
+
+
+
+sapply(c("reshape2", "tidyverse", "regioneR", "LOLA", "rtracklayer"), require, character.only = TRUE)
+
+hg38 <- getGenome("hg38")
+
+set.seed(5)
+
+#Function to perform stats for number of genomic location overlaps and distance between DMRs ###########
+
+DMRpermTest <- function(A, B, genome, universe, Comparison, file){
+  message("[DMRpermTest] Performing permutation test of regions using regioneR.")
+  pt <- permTest(A = A, B = B, genome = genome, ntimes = 10000, universe = universe, 
+                 evaluate.function = c(numOverlaps, meanDistance), randomize.function = resampleRegions, 
+                 mc.set.seed = FALSE, force.parallel = TRUE, alternative = "auto")
+  stats <- data.frame("Comparison" = Comparison, "Overlap_observed" = pt$Function1$observed, 
+                      "Overlap_zscore" = pt$Function1$zscore, "Overlap_pvalue" = pt$Function1$pval, 
+                      "Distance_observed" = pt$Function2$observed, "Distance_zscore" = pt$Function2$zscore, 
+                      "Distance_pvalue" = pt$Function2$pval)
+  message("[DMRpermTest] Complete! Writing plot and returning stats.")
+  pdf(file = file, width = 10, height = 5)
+  plot(x = pt, ncol = 2)
+  dev.off()
+  return(stats)
+}
+
+#Females Tissue Comparisons
+CHDS_Females_Cord_Females <- DMRpermTest(A=CHDS_Females_DMRs, B=Cord_Females_DMRs, genome = hg38, 
+                                               universe = commonRegions(CHDS_Females_Universe,Cord_Females_Universe), 
+                                               Comparison = "CHDS vs Cord Females Overlap",
+                                               file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Female Tissue Comparisons/CHDS_Cord_Females_Overlap.pdf")
+ 
+CHDS_Females_Placenta_Females <- DMRpermTest(A=CHDS_Females_DMRs, B=Placenta_Females_DMRs, genome = hg38, 
+                                                   universe = commonRegions(CHDS_Females_Universe,Placenta_Females_Universe), 
+                                                   Comparison = "CHDS vs Placenta Females Overlap",
+                                                   file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Female Tissue Comparisons/CHDS_Placenta_Females_Overlap.pdf")
+
+CHDS_Females_Cortex_Females <- DMRpermTest(A=CHDS_Females_DMRs, B=Cortex_Females_DMRs, genome = hg38, 
+                                                 universe = commonRegions(CHDS_Females_Universe,Cortex_Females_Universe), 
+                                                 Comparison = "CHDS vs Cortex Females Overlap",
+                                                 file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Female Tissue Comparisons/CHDS_Cortex_Females_Overlap.pdf")
+
+Cord_Females_Placenta_Females <- DMRpermTest(A=Cord_Females_DMRs, B=Placenta_Females_DMRs, genome = hg38, 
+                                                   universe = commonRegions(Cord_Females_Universe,Placenta_Females_Universe), 
+                                                   Comparison = "Cord vs Placenta Females Overlap",
+                                                   file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Female Tissue Comparisons/Cord_Placenta_Females_Overlap.pdf")
+
+Cord_Females_Cortex_Females <- DMRpermTest(A=Cord_Females_DMRs, B=Cortex_Females_DMRs, genome = hg38, 
+                                                 universe = commonRegions(Cord_Females_Universe, Cortex_Females_Universe), 
+                                                 Comparison = "Cord vs Cortex Females Overlap",
+                                                 file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Female Tissue Comparisons/Cord_Cortex_Females_Overlap.pdf")
+
+Placenta_Females_Cortex_Females <- DMRpermTest(A=Placenta_Females_DMRs, B=Cortex_Females_DMRs, genome = hg38, 
+                                                     universe = commonRegions(Placenta_Females_Universe, Cortex_Females_Universe), 
+                                                     Comparison = "Placenta vs Cortex Females Overlap",
+                                                     file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Female Tissue Comparisons/Placenta_Cortex_Females_Overlap.pdf")
+  
+stats_females <- rbind(CHDS_Females_Cord_Females,
+                   CHDS_Females_Placenta_Females,
+                   CHDS_Females_Cortex_Females,
+                   Cord_Females_Placenta_Females,
+                   Cord_Females_Cortex_Females,
+                   Placenta_Females_Cortex_Females)
+write.xlsx(stats_females, file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Female Tissue Comparisons/Female_Tissue_Comparisons_stats.xlsx")
+
+#Males Tissue Comparisons
+CHDS_Males_Cord_Males <- DMRpermTest(A=CHDS_Males_DMRs, B=Cord_Males_DMRs, genome = hg38, 
+                                           universe = commonRegions(CHDS_Males_Universe,Cord_Males_Universe), 
+                                           Comparison = "CHDS vs Cord Blood Males Overlap",
+                                           file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Male Tissue Comparisons/CHDS_Cord_Males_Overlap.pdf")
+
+CHDS_Males_Placenta_Males <- DMRpermTest(A=CHDS_Males_DMRs, B=Placenta_Males_DMRs, genome = hg38, 
+                                                   universe = commonRegions(CHDS_Males_Universe,Placenta_Males_Universe), 
+                                                   Comparison = "CHDS vs Placenta Males Overlap",
+                                                   file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Male Tissue Comparisons/CHDS_Placenta_Males_Overlap.pdf")
+
+CHDS_Males_Cortex_Males <- DMRpermTest(A=CHDS_Males_DMRs, B=Cortex_Males_DMRs, genome = hg38, 
+                                           universe = commonRegions(CHDS_Males_Universe,Cortex_Males_Universe), 
+                                           Comparison = "CHDS vs Cortex Males Overlap",
+                                           file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Male Tissue Comparisons/CHDS_Cortex_Males_Overlap.pdf")
+
+Cord_Males_Placenta_Males <- DMRpermTest(A=Cord_Males_DMRs, B=Placenta_Males_DMRs, genome = hg38, 
+                                               universe = commonRegions(Cord_Males_Universe, Placenta_Males_Universe), 
+                                               Comparison = "Cord vs Placenta Males Overlap",
+                                               file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Male Tissue Comparisons/Cord_Placenta_Males_Overlap.pdf")
+
+Cord_Males_Cortex_Males <- DMRpermTest(A=Cord_Males_DMRs, B=Cortex_Males_DMRs, genome = hg38, 
+                                             universe = commonRegions(Cord_Males_Universe, Cortex_Males_Universe), 
+                                             Comparison = "Cord vs Cortex Males Overlap",
+                                             file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Male Tissue Comparisons/Cord_Cortex_Males_Overlap.pdf")
+
+Placenta_Males_Cortex_Males <- DMRpermTest(A=Placenta_Males_DMRs, B=Cortex_Males_DMRs, genome = hg38, 
+                                                 universe = commonRegions(Placenta_Males_Universe, Cortex_Males_Universe), 
+                                                 Comparison = "Placenta vs Cortex Males Overlap",
+                                                 file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Male Tissue Comparisons/Placenta_Cortex_Males_Overlap.pdf")
+
+stats_males <- rbind(CHDS_Males_Cord_Males,
+                     CHDS_Males_Placenta_Males,
+                     CHDS_Males_Cortex_Males,
+                     CHDS_Males_Cord_Males,
+                     CHDS_Males_Placenta_Males,
+                     CHDS_Males_Cortex_Males,
+                     Cord_Males_Placenta_Males,
+                     Cord_Males_Cortex_Males,
+                     Placenta_Males_Cortex_Males)
+write.xlsx(stats_males, file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Male Tissue Comparisons/Male_Tissue_Comparisons_stats.xlsx")
