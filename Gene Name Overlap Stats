@@ -152,12 +152,12 @@ StatsDataFrame6(L1 = CHDS_Cord_Combined, L2 = CHDS_Placenta_Combined, L3 = CHDS_
 # Females Tissue Comparisons ####################################
 setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Female Tissue Comparisons")
 
-CHDS_Cord_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes_V2, Cord_Females_DMR_Genes_V1,CHDS_Females_Universe_Genes_V2, Cord_Females_Universe_Genes_V1)
-CHDS_Placenta_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes_V2, Placenta_Females_DMR_Genes_V1,CHDS_Females_Universe_Genes_V2, Placenta_Females_Universe_Genes_V1)
-CHDS_Cortex_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes_V2, Cortex_Females_DMR_Genes_V2,CHDS_Females_Universe_Genes_V2, Cortex_Females_Universe_Genes_V2)
-Cord_Placenta_Female <- DMRGeneNameOverlap(Cord_Females_DMR_Genes_V1, Placenta_Females_DMR_Genes_V1, Cord_Females_Universe_Genes_V1, Placenta_Females_Universe_Genes_V1)
-Cord_Cortex_Female <- DMRGeneNameOverlap(Cord_Females_DMR_Genes_V1, Cortex_Females_DMR_Genes_V2, Cord_Females_Universe_Genes_V1, Cortex_Females_Universe_Genes_V2)
-Placenta_Cortex_Female <- DMRGeneNameOverlap(Placenta_Females_DMR_Genes_V1, Cortex_Females_DMR_Genes_V2, Placenta_Females_Universe_Genes_V1, Cortex_Females_Universe_Genes_V2)
+CHDS_Cord_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes, Cord_Females_DMR_Genes,CHDS_Females_Universe_Genes, Cord_Females_Universe_Genes)
+CHDS_Placenta_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes, Placenta_Females_DMR_Genes,CHDS_Females_Universe_Genes, Placenta_Females_Universe_Genes)
+CHDS_Cortex_Female <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes, Cortex_Females_DMR_Genes, CHDS_Females_Universe_Genes, Cortex_Females_Universe_Genes)
+Cord_Placenta_Female <- DMRGeneNameOverlap(Cord_Females_DMR_Genes, Placenta_Females_DMR_Genes, Cord_Females_Universe_Genes, Placenta_Females_Universe_Genes)
+Cord_Cortex_Female <- DMRGeneNameOverlap(Cord_Females_DMR_Genes, Cortex_Females_DMR_Genes, Cord_Females_Universe_Genes, Cortex_Females_Universe_Genes)
+Placenta_Cortex_Female <- DMRGeneNameOverlap(Placenta_Females_DMR_Genes, Cortex_Females_DMR_Genes, Placenta_Females_Universe_Genes, Cortex_Females_Universe_Genes)
 
 StatsDataFrame6(L1 = CHDS_Cord_Female, L2 = CHDS_Placenta_Female, L3 = CHDS_Cortex_Female, L4 = Cord_Placenta_Female, L5 = Cord_Cortex_Female, L6 = Placenta_Cortex_Female,
                ColumnNames = c("", "NewbornBlood_Cord", "NewbornBlood_Placenta", "NewbornBlood_Cortex", "Cord_Placenta", "Cord_Cortex", "Placenta_Cortex"),
@@ -166,12 +166,12 @@ StatsDataFrame6(L1 = CHDS_Cord_Female, L2 = CHDS_Placenta_Female, L3 = CHDS_Cort
 # Males Tissue Comparisons  ####################################
 setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Male Tissue Comparisons")
 
-CHDS_Cord_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes_V7, Cord_Males_DMR_Genes_V1,CHDS_Males_Universe_Genes_V7, Cord_Males_Universe_Genes_V1)
-CHDS_Placenta_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes_V7, Placenta_Males_DMR_Genes_V1,CHDS_Males_Universe_Genes_V7, Placenta_Males_Universe_Genes_V1)
-CHDS_Cortex_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes_V7, Cortex_Males_DMR_Genes_V3,CHDS_Males_Universe_Genes_V7, Cortex_Males_Universe_Genes_V3)
-Cord_Placenta_Male <- DMRGeneNameOverlap(Cord_Males_DMR_Genes_V1, Placenta_Males_DMR_Genes_V1, Cord_Males_Universe_Genes_V1, Placenta_Males_Universe_Genes_V1)
-Cord_Cortex_Male <- DMRGeneNameOverlap(Cord_Males_DMR_Genes_V1, Cortex_Males_DMR_Genes_V3, Cord_Males_Universe_Genes_V1, Cortex_Males_Universe_Genes_V3)
-Placenta_Cortex_Male <- DMRGeneNameOverlap(Placenta_Males_DMR_Genes_V1, Cortex_Males_DMR_Genes_V3, Placenta_Males_Universe_Genes_V1, Cortex_Males_Universe_Genes_V3)
+CHDS_Cord_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes, Cord_Males_DMR_Genes, CHDS_Males_Universe_Genes, Cord_Males_Universe_Genes)
+CHDS_Placenta_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes, Placenta_Males_DMR_Genes, CHDS_Males_Universe_Genes, Placenta_Males_Universe_Genes)
+CHDS_Cortex_Male <- DMRGeneNameOverlap(CHDS_Males_DMR_Genes, Cortex_Males_DMR_Genes, CHDS_Males_Universe_Genes, Cortex_Males_Universe_Genes)
+Cord_Placenta_Male <- DMRGeneNameOverlap(Cord_Males_DMR_Genes, Placenta_Males_DMR_Genes, Cord_Males_Universe_Genes, Placenta_Males_Universe_Genes)
+Cord_Cortex_Male <- DMRGeneNameOverlap(Cord_Males_DMR_Genes, Cortex_Males_DMR_Genes, Cord_Males_Universe_Genes, Cortex_Males_Universe_Genes)
+Placenta_Cortex_Male <- DMRGeneNameOverlap(Placenta_Males_DMR_Genes, Cortex_Males_DMR_Genes, Placenta_Males_Universe_Genes, Cortex_Males_Universe_Genes)
 
 StatsDataFrame6(L1 = CHDS_Cord_Male, L2 = CHDS_Placenta_Male, L3 = CHDS_Cortex_Male, L4 = Cord_Placenta_Male, L5 = Cord_Cortex_Male, L6 = Placenta_Cortex_Male,
                ColumnNames = c("", "NewbornBlood_Cord", "NewbornBlood_Placenta", "NewbornBlood_Cortex", "Cord_Placenta", "Cord_Cortex", "Placenta_Cortex"),
