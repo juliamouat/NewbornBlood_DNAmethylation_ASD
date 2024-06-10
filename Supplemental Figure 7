@@ -1,0 +1,77 @@
+library(data.table)
+library(ggfortify)
+library(openxlsx)
+
+#Function
+SmoothMethPCAPlot <- function(file, sheet, name){
+  x <- read.xlsx(file, sheet)
+  t_x <- data.table::transpose(x)
+  colnames(t_x) <- rownames(x)
+  rownames(t_x) <- colnames(x)
+  y <- merge(CHDS_diagnosis, t_x, by = 'row.names', all = FALSE)
+  PCA <- prcomp(y[,-1:-2], center = TRUE, scale. = TRUE)
+  plot <- autoplot(PCA, data = y, colour = "ASD_Diagnosis", frame = TRUE, frame.type = 'norm') +
+    theme_classic() + 
+    theme(plot.background = element_rect(fill = "white"),
+          axis.text = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.x = element_text(color = "black", size = 12, family = "sans"),
+          axis.title.y = element_text(color = "black", size = 12, family = "sans"),
+          axis.line = element_line(color = "black", linewidth = 0.2),
+          legend.position = "none")
+  pdf(file = name, width = 7, height = 6)
+  print(plot)
+  dev.off()
+  return(plot)
+}
+
+
+## Sex Combined ##############################################################################################################
+setwd("/CHDS /Smoothed methylation/Sex Combined")
+CHDS_diagnosis <- read.xlsx("CHDS_diagnosis.xlsx", rowNames = TRUE)
+
+#CHDS samples in cord blood DMRs - Sex Combined 
+CHDS_samples_cord_DMRs_combined <- SmoothMethPCAPlot(file = "CHDS_SexCombined_SmoothMethylation.xlsx",
+                                             sheet = "CordBlood Sex Combined DMRs",
+                                             name = "CHDS_SexCombined_SmoothMeth_Plots/CHDSsamples_CordDMRs_SexCombined.pdf")
+#CHDS samples in placenta DMRs - Sex Combined 
+CHDS_samples_placenta_DMRs_combined <- SmoothMethPCAPlot(file = "CHDS_SexCombined_SmoothMethylation.xlsx",
+                                                 sheet = "Placenta Sex Combined DMRs",
+                                                 name = "CHDS_SexCombined_SmoothMeth_Plots/CHDSsamples_placentaDMRs_SexCombined.pdf")
+#CHDS samples in cortex DMRs - Sex Combined 
+CHDS_samples_cortex_DMRs_combined <- SmoothMethPCAPlot(file = "CHDS_SexCombined_SmoothMethylation.xlsx",
+                                                 sheet = "Cortex Sex Combined DMRs",
+                                                 name = "CHDS_SexCombined_SmoothMeth_Plots/CHDSsamples_cortexDMRs_SexCombined.pdf")
+
+## Females ########################################################################
+setwd("/CHDS /Smoothed methylation/Females")
+
+#CHDS samples in Cord Blood DMRs - Females Only 
+CHDS_samples_cord_DMRs_females <- SmoothMethPCAPlot(file = "CHDS_Female_SmoothMethylation.xlsx",
+                                                    sheet = "CordBlood Female DMRs",
+                                                    name = "CHDS_Females_SmoothMeth_Plots/CHDSsamples_Cord_DMRs_Females.pdf")
+#CHDS samples in Placenta DMRs - Females Only
+CHDS_samples_placenta_DMRs_females <- SmoothMethPCAPlot(file = "CHDS_Female_SmoothMethylation.xlsx",
+                                                        sheet = "Placenta Female DMRs",
+                                                        name = "CHDS_Females_SmoothMeth_Plots/CHDSsamples_Placenta_DMRs_Females.pdf")
+#CHDS samples in Cortex DMRs - Females Only
+CHDS_samples_cortex_DMRs_females <- SmoothMethPCAPlot(file = "CHDS_Female_SmoothMethylation.xlsx",
+                                                        sheet = "Cortex Female DMRs",
+                                                        name = "CHDS_Females_SmoothMeth_Plots/CHDSsamples_Cortex_DMRs_Females.pdf")
+
+## Males #########################################################################
+setwd("/CHDS /Smoothed methylation/Males")
+
+#CHDS samples in Cord Blood DMRs - Males Only
+CHDS_samples_Cord_DMRs_males <- SmoothMethPCAPlot(file = "CHDS_Male_SmoothMethylation.xlsx",
+                                                  sheet = "CordBlood Male DMRs",
+                                                  name = "CHDS_Males_SmoothMeth_Plots/CHDSsamples_CordBlood_DMRs_Males.pdf")
+
+#CHDS samples in Placenta DMRs - Males Only
+CHDS_samples_Placenta_DMRs_males <- SmoothMethPCAPlot(file = "CHDS_Male_SmoothMethylation.xlsx",
+                                                  sheet = "Placenta Male DMRs",
+                                                  name = "CHDS_Males_SmoothMeth_Plots/CHDSsamples_Placenta_DMRs_Males.pdf")
+
+#CHDS samples in Cortex DMRs - Males Only
+CHDS_samples_Cortex_DMRs_males <- SmoothMethPCAPlot(file = "CHDS_Male_SmoothMethylation.xlsx",
+                                                      sheet = "Cortex Male DMRs",
+                                                      name = "CHDS_Males_SmoothMeth_Plots/CHDSsamples_Cortex_DMRs_Males.pdf")
