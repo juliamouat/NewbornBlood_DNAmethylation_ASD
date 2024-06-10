@@ -1,0 +1,67 @@
+#Load Data #################################################################################
+# Newborn Blood Data ####
+# Discovery DMR Genes
+CHDS_Females_DMR_Genes <- read.xlsx("/CHDS /DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+CHDS_Males_DMR_Genes <- read.xlsx("/CHDS /DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Cord Blood DMR Genes ####
+Cord_Females_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Cord_Males_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Placenta DMR Genes ######
+Placenta_Females_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Placenta_Males_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Cortex DMR Genes  #######
+Cortex_Females_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Cortex_Males_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+#Get unique number of genes that DMRs map to for each dataset #########################################################
+NumGenes <- function(x){
+  NumGenes <- length(unique(x$geneSymbol))
+  return(NumGenes)
+}
+
+NumGenes(CHDS_Females_DMR_Genes) #181
+NumGenes(CHDS_Males_DMR_Genes) #66
+
+NumGenes(Cord_Females_DMR_Genes) #413
+NumGenes(Cord_Males_DMR_Genes) #235
+
+NumGenes(Placenta_Females_DMR_Genes) #2147
+NumGenes(Placenta_Males_DMR_Genes) #1493
+
+NumGenes(Cortex_Females_DMR_Genes) #6599
+NumGenes(Cortex_Males_DMR_Genes) #984
+
+
+#Four way Venn Diagram #########################################################
+#Females
+#CHDS=1, Cord=2, Placenta=3, Cortex=4
+install.packages("VennDiagram")
+library(VennDiagram)
+grid.newpage()
+pdf("/CHDS /DMR_Overlap/Overlap_Venn_Diagram_GeneName/Female_Tissue_Overlaps_GeneName.pdf",
+    bg = "white")
+draw.quad.venn(area1=181, area2=413, area3=2147, area4=6599,
+               n12=15, n13=42, n14=94, n23=84, n24=192, n34=981,
+               n123=4, n124=9, n134=29, n234=51, n1234=3,
+               category=c("Newborn Blood", "Cord Blood", "Placenta", "Cortex"),
+               col="Black", fill = c("Blue", "Red", "Orange", "Green"),
+               lty = "dashed")
+dev.off()
+
+#Males
+#CHDS=1, Cord=2, Placenta=3, Cortex=4
+install.packages("VennDiagram")
+library(VennDiagram)
+grid.newpage()
+pdf("/CHDS /DMR_Overlap/Overlap_Venn_Diagram_GeneName/Male_Tissue_Overlaps_GeneName.pdf",
+    bg = "white")
+draw.quad.venn(area1=66, area2=235, area3=1493, area4=984,
+               n12=5, n13=12, n14=5, n23=53, n24=18, n34=143,
+               n123=1, n124=3, n134=2, n234=10, n1234=1,
+               category=c("Newborn Blood", "Cord Blood", "Placenta", "Cortex"),
+               col="Black", fill = c("Blue", "Red", "Orange", "Green"),
+               lty = "dashed")
+dev.off()
