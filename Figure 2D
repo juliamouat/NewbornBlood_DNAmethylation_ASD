@@ -1,0 +1,60 @@
+#UpSet Plot of CHDS DMRs ############################################################################################
+
+#Load Annotated DMRs from CHDS newborn blood 
+library(openxlsx)
+TDfemalesASDfemales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/Females/V2/DMRs/DMRs_annotated.xlsx")
+TDmalesASDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/Males/V7/DMRs/DMRs_annotated.xlsx")
+ASDfemalesASDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/ASDfemalesASDmales/V1/DMRs/DMRs_annotated.xlsx")
+TDfemalesTDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/TDfemalesTDmales/V1/DMRs/DMRs_annotated.xlsx")
+ASDfemalesTDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/ASDfemalesTDmales/DMRs/DMRs_annotated.xlsx")
+TDfemalesASDmales_DMRs_Annotated <- read.xlsx("/Users/juliamouat/Library/Mobile Documents/com~apple~CloudDocs/LaSalle Lab/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/TDfemalesASDmales/DMRs/DMRs_annotated.xlsx")
+
+#Remove all non-autosomal DMRs (chrX and chrY)
+TDfemalesASDfemales_DMRs_Annotated_Autosomes <- subset(TDfemalesASDfemales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+TDmalesASDmales_DMRs_Annotated_Autosomes <- subset(TDmalesASDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+ASDfemalesASDmales_DMRs_Annotated_Autosomes <- subset(ASDfemalesASDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+TDfemalesTDmales_DMRs_Annotated_Autosomes <- subset(TDfemalesTDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+ASDfemalesTDmales_DMRs_Annotated_Autosomes <- subset(ASDfemalesTDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+TDfemalesASDmales_DMRs_Annotated_Autosomes <- subset(TDfemalesASDmales_DMRs_Annotated, !(chr %in% c("chrX", "chrY")))
+
+
+# Get list of unique genes that DMRs map to for each dataset ##########################
+TDfemalesASDfemales_Unique_GeneNames <- unique(TDfemalesASDfemales_DMRs_Annotated_Autosomes$geneSymbol)
+TDmalesASDmales_Unique_GeneNames <- unique(TDmalesASDmales_DMRs_Annotated_Autosomes$geneSymbol)
+ASDfemalesASDmales_Unique_GeneNames <- unique(ASDfemalesASDmales_DMRs_Annotated_Autosomes$geneSymbol)
+TDfemalesTDmales_Unique_GeneNames <- unique(TDfemalesTDmales_DMRs_Annotated_Autosomes$geneSymbol)
+ASDfemalesTDmales_Unique_GeneNames <- unique(ASDfemalesTDmales_DMRs_Annotated_Autosomes$geneSymbol)
+TDfemalesASDmales_Unique_GeneNames <- unique(TDfemalesASDmales_DMRs_Annotated_Autosomes$geneSymbol)
+
+DMRgeneList <- list(TDfemales_ASDfemales = TDfemalesASDfemales_Unique_GeneNames, TDmales_ASDmales = TDmalesASDmales_Unique_GeneNames, ASDfemales_ASDmales = ASDfemalesASDmales_Unique_GeneNames,
+                         TDfemales_TDmales = TDfemalesTDmales_Unique_GeneNames)
+
+DMRgeneList_Full <- list(TDfemales_ASDfemales = TDfemalesASDfemales_Unique_GeneNames, TDmales_ASDmales = TDmalesASDmales_Unique_GeneNames, ASDfemales_ASDmales = ASDfemalesASDmales_Unique_GeneNames,
+                    TDfemales_TDmales = TDfemalesTDmales_Unique_GeneNames, ASDfemales_TDmales = ASDfemalesTDmales_Unique_GeneNames, TDfemales_ASDmales = TDfemalesASDmales_Unique_GeneNames)
+
+
+#Figure 2D: Make UpSet Plot using DMRs from TD females v ASD females, TD males vs ASD males, ASD females vs ASD males, and TD females vs TD males ##############################
+install.packages("UpSetR")
+library(UpSetR)
+
+pdf("CHDS_DMRs_UpSet_Plot.pdf", width = 8, height = 6)
+upset(fromList(DMRgeneList), 
+      order.by = "freq", 
+      nsets = 6,
+      mainbar.y.label = "DMR Gene Name Intersections",
+      sets.x.label = "DMR Gene Names",
+      point.size = 3,
+      text.scale = 1.5)
+dev.off()
+
+
+#Supplemental Figure 4: Make UpSet Plot using all DMR comparisons: TD females v ASD females, TD males vs ASD males, ASD females vs ASD males, TD females vs TD males, ASD females vs TD males, TD females vs ASD males ######
+pdf("CHDS_DMRs_UpSet_Plot_Full.pdf", width = 10, height = 6)
+upset(fromList(DMRgeneList_Full), 
+      order.by = "freq", 
+      nsets = 6,
+      mainbar.y.label = "DMR Gene Name Intersections",
+      sets.x.label = "DMR Gene Names",
+      point.size = 3,
+      text.scale = 1.5)
+dev.off()
