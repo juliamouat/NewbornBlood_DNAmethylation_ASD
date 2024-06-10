@@ -1,8 +1,123 @@
+#input BED file of DMRs and get methylation levels over those DMRs in a different tissue
+
+module load R/4.1.0
+R
+.libPaths("/share/lasallelab/programs/comethyl/R_4.1.0/rtest")
+AnnotationHub::setAnnotationHubOption("CACHE", value = "/share/lasallelab/programs/comethyl/R_4.1.0/rtest")
+
+BiocManager::install("bsseq")
+library(bsseq)
+library(openxlsx)
+library(rtracklayer)
+
+getMeth(BSseq, regions = NULL, type = c("smooth", "raw"),
+       what = c("perBase", "perRegion"), confint = FALSE, alpha = 0.95,
+       withDimnames = TRUE)
+
+
+#load DMR bed files for all DMR comparisons ################################################
+
+#CHDS DMRs
+CHDS_Combined_DMRs <- import("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/SexCombined/DMRs/DMRs.bed")
+CHDS_Males_DMRs <- import("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/Males/DMRs/DMRs.bed")
+CHDS_Females_DMRs <- import("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/Females/DMRs/DMRs.bed")
+
+#Cord Blood DMRs
+Cord_Discovery_Combined_DMRs_V1 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/CordBlood_Comparison/DMRichR/Combined/V1/DMRs/DMRs.bed")
+Cord_Discovery_Females_DMRs_V1 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/CordBlood_Comparison/DMRichR/Females/V1/DMRs/DMRs.bed")
+Cord_Discovery_Males_DMRs_V1 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/CordBlood_Comparison/DMRichR/Males/V1/DMRs/DMRs.bed")
+
+#Placenta DMRs
+Placenta_Discovery_Combined_DMRs_V2 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Placenta_Comparison/DMRichR/Combined/V2/DMRs/DMRs.bed")
+Placenta_Discovery_Females_DMRs_V1 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Placenta_Comparison/DMRichR/Females/V1/DMRs/DMRs.bed")
+Placenta_Discovery_Males_DMRs_V1 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Placenta_Comparison/DMRichR/Males/V1/DMRs/DMRs.bed")
+
+#Cortex DMRs
+Cortex_Combined_DMRs_V3 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Cortex_Comparison/DMRichR/Combined/V3/DMRs/DMRs.bed")
+Cortex_Females_DMRs_V2 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Cortex_Comparison/DMRichR/Females/V2/DMRs/DMRs.bed")
+Cortex_Males_DMRs_V3 <- import("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Cortex_Comparison/DMRichR/Males/V3/DMRs/DMRs.bed")
+
+#Smoothed Methylation over Sex Combined DMRs #############################################################################
+setwd("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Smooth_Methylation/SexCombined")
+
+#CHDS Sex Combined samples --> get smoothed methylation over DMR regions from other tissues
+load("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/SexCombined/V2/RData/bsseq.RData")
+ECHO_combined_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = ECHO_Combined_DMRs_V3, type = "smooth", what = "perRegion")
+Cord_combined_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Cord_Discovery_Combined_DMRs_V1, type = "smooth", what = "perRegion")
+Placenta_combined_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Placenta_Discovery_Combined_DMRs_V2, type = "smooth", what = "perRegion")
+Cortex_combined_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Cortex_Combined_DMRs_V3, type = "smooth", what = "perRegion")
+CHDS_combined_list <- list('ECHO Sex Combined DMRs' = ECHO_combined_in_CHDS, 'CordBlood Sex Combined DMRs' = Cord_combined_in_CHDS, 
+                           'Placenta Sex Combined DMRs' = Placenta_combined_in_CHDS, 'Cortex Sex Combined DMRs' = Cortex_combined_in_CHDS)
+write.xlsx(CHDS_combined_list, "CHDS_SexCombined_SmoothMethylation.xlsx")
+
+#Cord Blood Sex Combined samples --> get smoothed methylation over DMR regions from other tissues 
+load("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/CordBlood_Comparison/DMRichR/Combined/V1/RData/bsseq.RData")
+CHDS_combined_in_cord <- getMeth(BSseq = bs.filtered.bsseq, regions = CHDS_Combined_DMRs_V2, type = "smooth", what = "perRegion")
+ECHO_combined_in_cord <- getMeth(BSseq = bs.filtered.bsseq, regions = ECHO_Combined_DMRs_V3, type = "smooth", what = "perRegion")
+Placenta_combined_in_cord <- getMeth(BSseq = bs.filtered.bsseq, regions = Placenta_Discovery_Combined_DMRs_V2, type = "smooth", what = "perRegion")
+Cortex_combined_in_cord <- getMeth(BSseq = bs.filtered.bsseq, regions = Cortex_Combined_DMRs_V3, type = "smooth", what = "perRegion")
+Cord_combined_list <- list('ECHO Sex Combined DMRs' = ECHO_combined_in_cord, 'CHDS Sex Combined DMRs' = CHDS_combined_in_cord, 
+                           'Placenta Sex Combined DMRs' = Placenta_combined_in_cord, 'Cortex Sex Combined DMRs' = Cortex_combined_in_cord)
+write.xlsx(Cord_combined_list, "CordBlood_SexCombined_SmoothMethylation.xlsx")
+
+#Placenta Sex Combined samples --> get smoothed methylation over DMR regions from other tissues 
+load("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Placenta_Comparison/DMRichR/Combined/V2/RData/bsseq.RData")
+CHDS_combined_in_placenta <- getMeth(BSseq = bs.filtered.bsseq, regions = CHDS_Combined_DMRs_V2, type = "smooth", what = "perRegion")
+ECHO_combined_in_placenta <- getMeth(BSseq = bs.filtered.bsseq, regions = ECHO_Combined_DMRs_V3, type = "smooth", what = "perRegion")
+Cord_combined_in_placenta <- getMeth(BSseq = bs.filtered.bsseq, regions = Cord_Discovery_Combined_DMRs_V1, type = "smooth", what = "perRegion")
+Cortex_combined_in_placenta <- getMeth(BSseq = bs.filtered.bsseq, regions = Cortex_Combined_DMRs_V3, type = "smooth", what = "perRegion")
+Placenta_combined_list <- list('ECHO Sex Combined DMRs' = ECHO_combined_in_placenta, 'CHDS Sex Combined DMRs' = CHDS_combined_in_placenta, 
+                               'CordBlood Sex Combined DMRs' = Cord_combined_in_placenta, 'Cortex Sex Combined DMRs' = Cortex_combined_in_placenta)
+write.xlsx(Placenta_combined_list, "Placenta_SexCombined_SmoothMethylation.xlsx")
+
+#Cortex Sex Combined samples --> get smoothed methylation over DMR regions from other tissues
+load("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Cortex_Comparison/DMRichR/Combined/V3/RData/bsseq.RData")
+CHDS_combined_in_cortex <- getMeth(BSseq = bs.filtered.bsseq, regions = CHDS_Combined_DMRs_V2, type = "smooth", what = "perRegion")
+ECHO_combined_in_cortex <- getMeth(BSseq = bs.filtered.bsseq, regions = ECHO_Combined_DMRs_V3, type = "smooth", what = "perRegion")
+Cord_combined_in_cortex <- getMeth(BSseq = bs.filtered.bsseq, regions = Cord_Discovery_Combined_DMRs_V1, type = "smooth", what = "perRegion")
+Placenta_combined_in_cortex <- getMeth(BSseq = bs.filtered.bsseq, regions = Placenta_Discovery_Combined_DMRs_V2, type = "smooth", what = "perRegion")
+Cortex_combined_list <- list('ECHO Sex Combined DMRs' = ECHO_combined_in_cortex, 'CHDS Sex Combined DMRs' = CHDS_combined_in_cortex, 
+                             'CordBlood Sex Combined DMRs' = Cord_combined_in_cortex, 'Placenta Sex Combined DMRs' = Placenta_combined_in_cortex)
+write.xlsx(Cortex_combined_list, "Cortex_SexCombined_SmoothMethylation.xlsx")
+
+
+#Smoothed Methylation over Females DMRs #############################################################################
+setwd("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Smooth_Methylation/Females")
+
+#CHDS Female samples --> get smoothed methylation over DMR regions from other tissues
+load("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/Females/V2/RData/bsseq.RData")
+CHDS_Female_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = CHDS_Females_DMRs_V2, type = "smooth", what = "perRegion")
+ECHO_Female_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = ECHO_Females_DMRs_V2, type = "smooth", what = "perRegion")
+Cord_Female_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Cord_Discovery_Females_DMRs_V1, type = "smooth", what = "perRegion")
+Placenta_Female_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Placenta_Discovery_Females_DMRs_V1, type = "smooth", what = "perRegion")
+Cortex_Female_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Cortex_Females_DMRs_V2, type = "smooth", what = "perRegion")
+CHDS_Female_list <- list('CHDS Female DMRs' = CHDS_Female_in_CHDS, 'ECHO Female DMRs' = ECHO_Female_in_CHDS, 
+                         'CordBlood Female DMRs' = Cord_Female_in_CHDS, 'Placenta Female DMRs' = Placenta_Female_in_CHDS, 
+                         'Cortex Female DMRs' = Cortex_Female_in_CHDS)
+write.xlsx(CHDS_Female_list, "CHDS_Female_SmoothMethylation.xlsx")
+
+
+#Smoothed Methylation over Males DMRs (V7) #############################################################################
+setwd("/share/lasallelab/Jules/CHDS_NDBS/Tissue_Comparisons/Smooth_Methylation/Males")
+
+#CHDS Male samples --> get smoothed methylation over DMR regions from other tissues
+load("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/Males/V7/RData/bsseq.RData")
+CHDS_Male_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = CHDS_Males_DMRs_V7, type = "smooth", what = "perRegion")
+ECHO_Male_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = ECHO_Males_DMRs_V3, type = "smooth", what = "perRegion")
+Cord_Male_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Cord_Discovery_Males_DMRs_V1, type = "smooth", what = "perRegion")
+Placenta_Male_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Placenta_Discovery_Males_DMRs_V1, type = "smooth", what = "perRegion")
+Cortex_Male_in_CHDS <- getMeth(BSseq = bs.filtered.bsseq, regions = Cortex_Males_DMRs_V3, type = "smooth", what = "perRegion")
+CHDS_Male_list <- list('CHDS Male DMRs' = CHDS_Male_in_CHDS, 'ECHO Male DMRs' = ECHO_Male_in_CHDS, 
+                       'CordBlood Male DMRs' = Cord_Male_in_CHDS, 'Placenta Male DMRs' = Placenta_Male_in_CHDS, 
+                       'Cortex Male DMRs' = Cortex_Male_in_CHDS)
+write.xlsx(CHDS_Male_list, "CHDS_Male_SmoothMethylation.xlsx")
+
+
+#Function
 library(data.table)
 library(ggfortify)
 library(openxlsx)
 
-#Function
 SmoothMethPCAPlot <- function(file, sheet, name){
   x <- read.xlsx(file, sheet)
   t_x <- data.table::transpose(x)
