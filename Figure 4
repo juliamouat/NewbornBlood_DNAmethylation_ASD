@@ -1,0 +1,76 @@
+# Load Data #################################################################################################
+
+# Discovery Newborn Blood (CHDS)
+CHDS_Females_GOfuncR <- read.xlsx("/CHDS /DMRichR/Females/Ontologies/GOfuncR.xlsx")
+CHDS_Males_GOfuncR <- read.xlsx("/CHDS /DMRichR/Males/Ontologies/GOfuncR.xlsx")
+
+#Cord Blood
+Cord_Females_GOfuncR <- read.xlsx("/CHDS /CordBlood/DMRichR/Females/Ontologies/GOfuncR.xlsx")
+Cord_Males_GOfuncR <- read.xlsx("/CHDS /CordBlood/DMRichR/Males/Ontologies/GOfuncR.xlsx")
+
+#Placenta
+Placenta_Females_GOfuncR <- read.xlsx("/CHDS /Placenta/DMRichR/Females/Ontologies/GOfuncR.xlsx")
+Placenta_Males_GOfuncR <- read.xlsx("/CHDS /Placenta/DMRichR/Males/Ontologies/GOfuncR.xlsx")
+
+#Cortex
+Cortex_Females_GOfuncR <- read.xlsx("/CHDS /Cortex/DMRichR/Females/Ontologies/GOfuncR.xlsx")
+Cortex_Males_GOfuncR <- read.xlsx("/CHDS /Cortex/DMRichR/Males/Ontologies/GOfuncR.xlsx")
+
+#Function to keep biological processes that have p<0.2  #################################
+GO_bio <- function(data){
+  bio <- data[data$ontology=="biological_process",]
+  bio_0.2 <- bio[bio$raw_p_overrep < 0.2,]
+  return(bio_0.2)
+
+CHDS_Females_GOfuncR_Bio <- GO_bio(CHDS_Females_GOfuncR)
+CHDS_Males_GOfuncR_Bio <- GO_bio(CHDS_Males_GOfuncR)
+Cord_Females_GOfuncR_Bio <- GO_bio(Cord_Females_GOfuncR)
+Cord_Males_GOfuncR_Bio <- GO_bio(Cord_Males_GOfuncR)
+Placenta_Females_GOfuncR_Bio <- GO_bio(Placenta_Females_GOfuncR)
+Placenta_Males_GOfuncR_Bio <- GO_bio(Placenta_Males_GOfuncR)
+Cortex_Females_GOfuncR_Bio <- GO_bio(Cortex_Females_GOfuncR)
+Cortex_Males_GOfuncR_Bio <- GO_bio(Cortex_Males_GOfuncR)
+
+
+#Function to overlap GOfuncR biological process GO terms (p<0.2) from all 4 tissues  ##########################
+OverlapGO <- function(A,B,C,D){
+  Overlap <- Reduce(intersect, list(A$node_name, B$node_name, C$node_name, D$node_name))
+  return(Overlap)
+}
+
+Females_GOfuncR_Bio <- OverlapGO(CHDS_Females_GOfuncR_Bio, Cord_Females_GOfuncR_Bio, Placenta_Females_GOfuncR_Bio, Cortex_Females_GOfuncR_Bio)
+Males_GOfuncR_Bio <- OverlapGO(CHDS_Males_GOfuncR_Bio, Cord_Males_GOfuncR_Bio, Placenta_Males_GOfuncR_Bio, Cortex_Males_GOfuncR_Bio)
+
+
+#Function to get p-values to then merge with terms to make graphing easier #############################
+Pvalue <- function(data){
+  GOterm_Pvalue <- data[,c("node_name", "raw_p_overrep")]
+  return(GOterm_Pvalue)
+}
+
+CHDS_Females_GOfuncR_Bio_Pvalues <- Pvalue(CHDS_Females_GOfuncR_Bio)
+Cord_Females_GOfuncR_Bio_Pvalues <- Pvalue(Cord_Females_GOfuncR_Bio)
+Placenta_Females_GOfuncR_Bio_Pvalues <- Pvalue(Placenta_Females_GOfuncR_Bio)
+Cortex_Females_GOfuncR_Bio_Pvalues <- Pvalue(Cortex_Females_GOfuncR_Bio)
+
+CHDS_Males_GOfuncR_Bio_Pvalues <- Pvalue(CHDS_Males_GOfuncR_Bio)
+Cord_Males_GOfuncR_Bio_Pvalues <- Pvalue(Cord_Males_GOfuncR_Bio)
+Placenta_Males_GOfuncR_Bio_Pvalues <- Pvalue(Placenta_Males_GOfuncR_Bio)
+Cortex_Males_GOfuncR_Bio_Pvalues <- Pvalue(Cortex_Males_GOfuncR_Bio)
+
+
+# Function to merge p-values with terms ######################################################
+GO_Pvalue <- function(A,B,C,D){
+  merge_1 <- merge(A,B, by = "node_name", all = FALSE)
+  merge_2 <- merge(merge_1, C, by = "node_name", all = FALSE)
+  merge_3 <- merge(merge_2, D, by = "node_name", all = FALSE)
+  names(merge_3) <- c("GO term", "Newborn Blood Pvalue", "Cord Blood Pvalue", "Placenta Pvalue", "Cortex Pvalue")
+  print(merge_3)
+  return(merge_3)
+}
+
+Females_GOfuncR_Bio_Pvalues <- GO_Pvalue(CHDS_Females_GOfuncR_Bio_Pvalues, Cord_Females_GOfuncR_Bio_Pvalues,Placenta_Females_GOfuncR_Bio_Pvalues,Cortex_Females_GOfuncR_Bio_Pvalues)
+Males_GOfuncR_Bio_Pvalues <- GO_Pvalue(CHDS_Males_GOfuncR_Bio_Pvalues, Cord_Males_GOfuncR_Bio_Pvalues,Placenta_Males_GOfuncR_Bio_Pvalues,Cortex_Males_GOfuncR_Bio_Pvalues)
+
+write.xlsx(Females_GOfuncR_Bio, "/CHDS /GO_terms_overlap/GOfuncR/p<0.2/Females_GOfuncR_Overlaps.xlsx")
+write.xlsx(Males_GOfuncR_Bio, "/CHDS /GO_terms_overlap/GOfuncR/p<0.2/Males_GOfuncR_Overlaps.xlsx")
