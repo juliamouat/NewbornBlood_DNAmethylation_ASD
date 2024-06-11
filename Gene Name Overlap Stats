@@ -75,6 +75,8 @@ Cortex_Combined_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Combined/Extr
 Cortex_Females_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
 Cortex_Males_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
 
+
+
 #Gene Overlap Stats ####################################################################################################
 
 DMRGeneNameOverlap <- function(A, B, C, D){
@@ -83,6 +85,8 @@ DMRGeneNameOverlap <- function(A, B, C, D){
   list <- list(stats@Jaccard, stats@odds.ratio, stats@pval)
   return(list)
 }
+
+
 
 # Supplemental Table 20: NDBS Replication ##############################
 setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/NDBS Replication")
@@ -103,7 +107,10 @@ StatsDataFrame3(NDBS_Replication_Combined, NDBS_Replication_Females, NDBS_Replic
                ColumnNames = c("", "Combined", "Females", "Males"),
                file = "NDBS_Replication_GeneName_Overlap_Stats.xlsx")
 
+
+
 # Supplemental Table 13: Females x Males for each tissue ################
+
 setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Females x Males")
 
 CHDS_Female_Male <- DMRGeneNameOverlap(CHDS_Females_DMR_Genes, CHDS_Males_DMR_Genes, CHDS_Females_Universe_Genes, CHDS_Males_Universe_Genes)
@@ -123,6 +130,22 @@ StatsDataFrame5 <- function(L1, L2, L3, L4, L5, ColumnNames, file){
 StatsDataFrame5(L1 = CHDS_Female_Male, L2 = ECHO_Female_Male, L3 = Cord_Female_Male, L4 = Placenta_Female_Male, L5 = Cortex_Female_Male,
                ColumnNames = c("","CHDS", "ECHO", "Cord Blood", "Placenta", "Cortex"),
                file = "Female_Male_GeneName_Overlap_Stats.xlsx")
+
+
+
+# Supplemental Table 16: Female Protective Effect, Discovery Newborn Blood (CHDS) ##################
+
+setwd("/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/Overlap_DMRs/GeneNameOverlap_Stats")
+
+L1 <- DMRGeneNameOverlap(A = CHDS_Females_DMR_Genes, B = CHDS_Males_DMR_Genes, C = CHDS_Females_Universe_Genes, D = CHDS_Males_Universe_Genes)
+L2 <- DMRGeneNameOverlap(A = CHDS_Females_DMR_Genes, B = ASDfemales_ASDmales_DMR_Genes, C = CHDS_Females_Universe_Genes, D = ASDfemales_ASDmales_Universe_Genes)
+L3 <- DMRGeneNameOverlap(A = CHDS_Females_DMR_Genes, B = TDfemales_TDmales_DMR_Genes, C = CHDS_Females_Universe_Genes, D = TDfemales_TDmales_Universe_Genes)
+L4 <- DMRGeneNameOverlap(A = CHDS_Males_DMR_Genes, B = ASDfemales_ASDmales_DMR_Genes, C = CHDS_Males_Universe_Genes, D = ASDfemales_ASDmales_Universe_Genes)
+L5 <- DMRGeneNameOverlap(A = CHDS_Males_DMR_Genes, B = TDfemales_TDmales_DMR_Genes, C = CHDS_Males_Universe_Genes, D = TDfemales_TDmales_Universe_Genes)
+L6 <- DMRGeneNameOverlap(A = ASDfemales_ASDmales_DMR_Genes, B = TDfemales_TDmales_DMR_Genes, C = ASDfemales_ASDmales_Universe_Genes, D = ASDfemales_ASDmales_Universe_Genes)
+StatsDataFrame(L1, L2, L3, L4, L5, L6,
+               ColumnNames = c("", "TDfASDf_TDmASDm", "TDfASDf_ASDfASDm", "TDfASDf_TDfTDm", "TDmASDm_ASDfASDm", "TDmASDm_TDfTDm", "ASDfASDm_TDfTDm"),
+               file = "MaleBrain_GenderIncoherence_GeneName_Overlap_Stats.xlsx")
 
 
 # Supplemental Table 21: Tissue Comparisons #############################################################################################
