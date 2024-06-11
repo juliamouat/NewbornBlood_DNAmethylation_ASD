@@ -1,12 +1,12 @@
 #Discovery Newborn Blood (CHDS) ###########################################################
 
-#ASD Females vs ASD Males
+# Supplemental Table 14: TD Females vs TD Males
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
 --genome hg38 \
 --coverage 1 \
---perGroup '0.32' \
+--perGroup '0.24' \
 --minCpGs 5 \
 --maxPerms 10 \
 --maxBlockPerms 10 \
@@ -17,13 +17,13 @@ call="Rscript \
 --EnsDb FALSE \
 --cores 20"
 
-#TD Females vs TD Males
+# Supplemental Table 15: ASD Females vs ASD Males
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
 --genome hg38 \
 --coverage 1 \
---perGroup '0.24' \
+--perGroup '0.32' \
 --minCpGs 5 \
 --maxPerms 10 \
 --maxBlockPerms 10 \
