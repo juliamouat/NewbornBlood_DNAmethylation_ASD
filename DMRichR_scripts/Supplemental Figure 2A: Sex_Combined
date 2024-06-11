@@ -1,4 +1,4 @@
-#Discovery Newborn Blood (CHDS)
+# Supplemental Table 1: Discovery Newborn Blood (CHDS)
 call="Rscript \
 --vanilla \
 --vanilla \
@@ -19,7 +19,7 @@ call="Rscript \
 --cellComposition TRUE \
 > DMRichR.log 2>&1 &"
 
-#Replication Newborn Blood (ReCHARGE/ECHO)
+# Supplemental Table 17: Replication Newborn Blood (ReCHARGE/ECHO)
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
@@ -39,7 +39,7 @@ call="Rscript \
 --cores 20"
 
 
-#Cord Blood
+# Supplemental Table 4: Cord Blood
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
@@ -59,7 +59,7 @@ call="Rscript \
 --cores 20"
 
 
-#Placenta
+# Supplemental Table 7: Placenta
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
@@ -79,7 +79,7 @@ call="Rscript \
 --cores 20"
 
 
-#Cortex
+# Supplemental Table 10: Cortex
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
