@@ -72,6 +72,61 @@ DMRpermTest <- function(A, B, genome, universe, Comparison, file){
   return(stats)
 }
 
+# Supplemental Table 13: Females x Males for each tissue 
+CHDS_Males_CHDS_Females <- DMRpermTest(A=CHDS_Males_DMRs, B=CHDS_Females_DMRs, genome = hg38, 
+                                             universe = commonRegions(CHDS_Males_Universe, CHDS_Females_Universe), 
+                                             Comparison = "CHDS Females vs CHDS Males Overlap",
+                                             file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Females x Males/CHDS_Females_CHDS_Males_Overlap.pdf")
+
+ECHO_Males_ECHO_Females <- DMRpermTest(A=ECHO_Males_DMRs, B=ECHO_Females_DMRs, genome = hg38, 
+                                             universe = commonRegions(ECHO_Males_Universe, ECHO_Females_Universe), 
+                                             Comparison = "ECHO Females vs ECHO Males Overlap",
+                                             file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Females x Males/ECHO_Females_ECHO_Males_Overlap.pdf")
+
+Cord_Males_Cord_Females <- DMRpermTest(A=Cord_Males_DMRs, B=Cord_Females_DMRs, genome = hg38, 
+                                       universe = commonRegions(Cord_Males_Universe, Cord_Males_Universe), 
+                                       Comparison = "Cord Blood Females vs Cord Blood Males Overlap",
+                                       file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Females x Males/Cord_Females_Cord_Males_Overlap.pdf")
+
+Placenta_Males_Placenta_Females <- DMRpermTest(A=Placenta_Males_DMRs, B=Placenta_Females_DMRs, genome = hg38, 
+                                                     universe = commonRegions(Placenta_Males_Universe, Placenta_Females_Universe), 
+                                                     Comparison = "Placenta Females vs Males Overlap",
+                                                     file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Females x Males/Placenta_Females_Placenta_Males_Overlap.pdf")
+
+Cortex_Males_Cortex_Females <- DMRpermTest(A=Cortex_Males_DMRs, B=Cortex_Females_DMRs, genome = hg38, 
+                                        universe = commonRegions(Cortex_Males_Universe, Cortex_Females_Universe), 
+                                        Comparison = "Cortex Females vs Cortex Males Overlap",
+                                        file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Females x Males/Cortex_Females_Cortex_Males_Overlap.pdf")
+
+stats_females_males <- rbind(CHDS_Males_CHDS_Females,
+                            ECHO_Males_ECHO_Females,
+                            Placenta_Males_Placenta_Females,
+                            Cord_Males_Cord_Females,
+                            Cortex_Males_Cortex_Females)
+write.xlsx(stats_females_males, file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/Females x Males/Females_Males_stats.xlsx")
+
+# Supplemental Table 20: Newborn Blood Replication
+CHDS_Combined_ECHO_Combined <- DMRpermTest(A=CHDS_Combined_DMRs, B=ECHO_Combined_DMRs, genome = hg38, 
+                                                 universe = commonRegions(CHDS_Combined_Universe, ECHO_Combined_Universe), 
+                                                 Comparison = "NDBS Sex Combined Overlap",
+                                                 file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/NDBS Replication/NDBS_SexCombined_Overlap.pdf")
+
+CHDS_Females_ECHO_Females <- DMRpermTest(A=CHDS_Females_DMRs, B=ECHO_Females_DMRs, genome = hg38, 
+                                                        universe = commonRegions(CHDS_Females_Universe, ECHO_Females_Universe), 
+                                                        Comparison = "NDBS Females Overlap",
+                                                        file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/NDBS Replication/NDBS_Females_Overlap.pdf")
+
+CHDS_Males_ECHO_Males <- DMRpermTest(A=CHDS_Males_DMRs, B=ECHO_Males_DMRs, genome = hg38, 
+                                           universe = commonRegions(CHDS_Males_Universe,ECHO_Males_Universe), 
+                                           Comparison = "NDBS Males Overlap",
+                                           file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/NDBS Replication/NDBS_Males_Overlap.pdf")
+
+stats_NDBS_Replication <- rbind(CHDS_V2_Combined_ECHO_V3_Combined,
+                                CHDS_V2_Females_ECHO_V2_Females,
+                                CHDS_V7_Males_ECHO_V3_Males)
+write.xlsx(stats_NDBS_Replication, file = "/CHDS /DMR_Overlap/DMRpermtest_Figures/NDBS Replication/NDBS_Replication_stats.xlsx")
+
+
 # Supplemental Table 22: Sex Combined Tissue Comparisons
 CHDS_Combined_Cord_Combined <- DMRpermTest(A=CHDS_Combined_DMRs, B=Cord_Combined_DMRs, genome = hg38, 
                                                  universe = commonRegions(CHDS_Combined_Universe,Cord_Discovery_Combined_Universe), 
