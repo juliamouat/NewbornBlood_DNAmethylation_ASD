@@ -1,0 +1,177 @@
+#Overlap of DMRs with SFARI genes
+#Fisher's exact test
+
+setwd("/SFARI Enrichment")
+library(GeneOverlap)
+library(openxlsx)
+library(regioneR)
+
+#Load Data #############################
+#SFARI Gene List: 3/28/2024 release
+SFARI_Genes <- read.csv("SFARI-Gene_genes_03-28-2024release_06-28-2024export.csv")
+
+# Discovery Newborn Blood (CHDS) DMR Genes
+CHDS_Combined_DMR_Genes <- read.xlsx("/CHDS /DMRichR/SexCombined/DMRs/DMRs_annotated.xlsx")
+CHDS_Females_DMR_Genes <- read.xlsx("/CHDS /DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+CHDS_Males_DMR_Genes <- read.xlsx("/CHDS /DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Discovery Newborn Blood (CHDS) Universe Genes
+CHDS_Combined_Universe_Genes <- read.xlsx("/CHDS /DMRichR/SexCombined/Extra/bsseq_background_annotated.xlsx")
+CHDS_Females_Universe_Genes <- read.xlsx("/CHDS /DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+CHDS_Males_Universe_Genes <- read.xlsx("/CHDS /DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+# Replication Newborn Blood (ReCHARGE/ECHO) DMR Genes
+ECHO_Combined_DMR_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+ECHO_Males_DMR_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+ECHO_Females_DMR_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+
+# Replication Newborn Blood (ReCHARGE/ECHO) Universe Genes
+ECHO_Combined_Universe_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+ECHO_Males_Universe_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+ECHO_Females_Universe_Genes <- read.xlsx("/ReCHARGE:ECHO/ASD NDBS NovaSeq260/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+
+# Cord Blood DMR Genes
+Cord_Combined_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+Cord_Females_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Cord_Males_DMR_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Cord Blood Universe Genes 
+Cord_Combined_Universe_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+Cord_Females_Universe_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+Cord_Males_Universe_Genes <- read.xlsx("/CHDS /CordBlood/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+# Placenta DMR Genes
+Placenta_Combined_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+Placenta_Females_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Placenta_Males_DMR_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Placenta Universe Genes
+Placenta_Combined_Universe_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+Placenta_Females_Universe_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+Placenta_Males_Universe_Genes <- read.xlsx("/CHDS /Placenta/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+# Cortex DMR Genes  
+Cortex_Combined_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Combined/DMRs/DMRs_annotated.xlsx")
+Cortex_Females_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Females/DMRs/DMRs_annotated.xlsx")
+Cortex_Males_DMR_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Males/DMRs/DMRs_annotated.xlsx")
+
+# Cortex Universe Genes 
+Cortex_Combined_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Combined/Extra/bsseq_background_annotated.xlsx")
+Cortex_Females_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Females/Extra/bsseq_background_annotated.xlsx")
+Cortex_Males_Universe_Genes <- read.xlsx("/CHDS /Cortex/DMRichR/Males/Extra/bsseq_background_annotated.xlsx")
+
+
+#Gene Overlap Stats with SFARI Gene List ####################################################################################################
+
+DMRGeneSFARI_Overlap <- function(SFARI, DMR, Universe){
+  overlap <- newGeneOverlap(listA = SFARI$gene.symbol, listB = DMR$geneSymbol, genome.size = length(Universe$geneSymbol))
+  stats <- testGeneOverlap(overlap)
+  list <- list(stats@Jaccard, stats@odds.ratio, stats@pval)
+  return(list)
+}
+
+StatsDataFrame <- function(L1, L2, L3, L4, L5, ColumnNames, file){
+  RowNames <- list("Jaccard Index", "Odds Ratio", "P Value")
+  DataFrame <- data.frame(unlist(x = RowNames), unlist(x = L1), unlist(x = L2), unlist(x = L3), unlist(x = L4), unlist(x = L5))
+  colnames(DataFrame) <- ColumnNames
+  write.xlsx(DataFrame, file = file)
+  return(DataFrame)
+}
+
+#Sex Combined
+setwd("/Sex Combined")
+CHDS_Combined_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, CHDS_Combined_DMR_Genes, CHDS_Combined_Universe_Genes)
+ECHO_Combined_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, ECHO_Combined_DMR_Genes, ECHO_Combined_Universe_Genes)
+Cord_Combined_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Cord_Combined_DMR_Genes, Cord_Combined_Universe_Genes)
+Placenta_Combined_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Placenta_Combined_DMR_Genes, Placenta_Combined_Universe_Genes)
+Cortex_Combined_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Cortex_Combined_DMR_Genes, Cortex_Combined_Universe_Genes)
+StatsDataFrame(CHDS_Combined_SFARI, ECHO_Combined_SFARI, Cord_Combined_SFARI, Placenta_Combined_SFARI, Cortex_Combined_SFARI,
+               ColumnNames = c("", "Discovery Newborn Blood", "Replication Newborn Blood", "Cord Blood", "Placenta", "Cortex"),
+               file = "DMRgenes_SFARIgenes_Overlap_Stats_SexCombined.xlsx")
+
+
+#Females 
+setwd("/Females")
+CHDS_Females_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, CHDS_Females_DMR_Genes, CHDS_Females_Universe_Genes)
+ECHO_Females_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, ECHO_Females_DMR_Genes, ECHO_Females_Universe_Genes)
+Cord_Females_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Cord_Females_DMR_Genes, Cord_Females_Universe_Genes)
+Placenta_Females_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Placenta_Females_DMR_Genes, Placenta_Females_Universe_Genes)
+Cortex_Females_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Cortex_Females_DMR_Genes, Cortex_Females_Universe_Genes)
+StatsDataFrame(CHDS_Females_SFARI, ECHO_Females_SFARI, Cord_Females_SFARI, Placenta_Females_SFARI, Cortex_Females_SFARI,
+               ColumnNames = c("", "Discovery Newborn Blood", "Replication Newborn Blood", "Cord Blood", "Placenta", "Cortex"),
+               file = "DMRgenes_SFARIgenes_Overlap_Stats_Females.xlsx")
+
+#Males
+setwd("/Males")
+CHDS_Males_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, CHDS_Males_DMR_Genes, CHDS_Males_Universe_Genes)
+ECHO_Males_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, ECHO_Males_DMR_Genes, ECHO_Males_Universe_Genes)
+Cord_Males_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Cord_Males_DMR_Genes, Cord_Males_Universe_Genes)
+Placenta_Males_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Placenta_Males_DMR_Genes, Placenta_Males_Universe_Genes)
+Cortex_Males_SFARI <- DMRGeneSFARI_Overlap(SFARI_Genes, Cortex_Males_DMR_Genes, Cortex_Males_Universe_Genes)
+StatsDataFrame(CHDS_Males_SFARI, ECHO_Males_SFARI, Cord_Males_SFARI, Placenta_Males_SFARI, Cortex_Males_SFARI,
+               ColumnNames = c("", "Discovery Newborn Blood", "Replication Newborn Blood", "Cord Blood", "Placenta", "Cortex"),
+               file = "DMRgenes_SFARIgenes_Overlap_Stats_Males.xlsx")
+
+
+######################################################################################################################################################
+
+#Gene Name Overlaps -- get gene names
+
+#Function 
+OverlappingGeneNames <- function(SFARI, DMR){
+  Overlap <- newGeneOverlap(listA = SFARI$gene.symbol, listB = DMR$geneSymbol, genome.size = NULL)
+  GeneNames <- Overlap@intersection
+  return(GeneNames)
+}
+
+
+#Sex Combined
+setwd("/Sex Combined")
+CHDS_Combined_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, CHDS_Combined_DMR_Genes)
+ECHO_Combined_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, ECHO_Combined_DMR_Genes)
+Cord_Combined_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Cord_Combined_DMR_Genes)
+Placenta_Combined_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Placenta_Combined_DMR_Genes)
+Cortex_Combined_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Cortex_Combined_DMR_Genes)
+Combined_SFARI_Names <- list('Discovery Newborn Blood' = CHDS_Combined_SFARI_Names,
+                             'Replication Newborn Blood' = ECHO_Combined_SFARI_Names,
+                             'Cord Blood' = Cord_Combined_SFARI_Names,
+                             'Placenta' = Placenta_Combined_SFARI_Names,
+                             'Cortex' = Cortex_Combined_SFARI_Names)
+write.xlsx(Combined_SFARI_Names, "DMRgenes_SFARIgenes_Overlaps_SexCombined.xlsx")
+
+
+#Females
+setwd("/Females")
+CHDS_Females_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, CHDS_Females_DMR_Genes)
+ECHO_Females_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, ECHO_Females_DMR_Genes)
+Replicated_Newborn_Blood_SFARI_Females <- intersect(CHDS_Females_SFARI_Names, ECHO_Females_SFARI_Names)
+Cord_Females_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Cord_Females_DMR_Genes)
+Placenta_Females_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Placenta_Females_DMR_Genes)
+Cortex_Females_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Cortex_Females_DMR_Genes)
+Females_SFARI_Names <- list('Discovery Newborn Blood' = CHDS_Females_SFARI_Names,
+                             'Replication Newborn Blood' = ECHO_Females_SFARI_Names,
+                            'Replicated Newborn Blood' = Replicated_Newborn_Blood_SFARI_Females,
+                             'Cord Blood' = Cord_Females_SFARI_Names,
+                             'Placenta' = Placenta_Females_SFARI_Names,
+                             'Cortex' = Cortex_Females_SFARI_Names)
+write.xlsx(Females_SFARI_Names, "DMRgenes_SFARIgenes_Overlaps_Females.xlsx")
+
+
+#Males
+setwd("/Males")
+CHDS_Males_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, CHDS_Males_DMR_Genes)
+ECHO_Males_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, ECHO_Males_DMR_Genes)
+Replicated_Newborn_Blood_SFARI_Males <- intersect(CHDS_Males_SFARI_Names, ECHO_Males_SFARI_Names)
+Cord_Males_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Cord_Males_DMR_Genes)
+Placenta_Males_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Placenta_Males_DMR_Genes)
+Cortex_Males_SFARI_Names <- OverlappingGeneNames(SFARI_Genes, Cortex_Males_DMR_Genes)
+Males_SFARI_Names <- list('Discovery Newborn Blood' = CHDS_Males_SFARI_Names,
+                            'Replication Newborn Blood' = ECHO_Males_SFARI_Names,
+                          'Replicated Newborn Blood' = Replicated_Newborn_Blood_SFARI_Males,
+                            'Cord Blood' = Cord_Males_SFARI_Names,
+                            'Placenta' = Placenta_Males_SFARI_Names,
+                            'Cortex' = Cortex_Males_SFARI_Names)
+write.xlsx(Males_SFARI_Names, "DMRgenes_SFARIgenes_Overlaps_Males.xlsx")
+
+
+
