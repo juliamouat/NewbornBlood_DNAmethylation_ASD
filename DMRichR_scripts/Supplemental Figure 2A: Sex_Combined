@@ -14,10 +14,9 @@ call="Rscript \
 --adjustCovariate 'Sex' \
 --sexCheck FALSE \
 --GOfuncR TRUE \
---cores 20 \
---EnsDb FALSE
---cellComposition TRUE \
-> DMRichR.log 2>&1 &"
+--EnsDb FALSE \
+--cellComposition FALSE \
+--cores 20"
 
 # Supplemental Table 17: Replication Newborn Blood (ReCHARGE/ECHO)
 call="Rscript \
