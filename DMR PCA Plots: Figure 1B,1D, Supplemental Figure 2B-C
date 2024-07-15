@@ -41,14 +41,14 @@ CHDSsamples_CHDS_DMRs_males <- SmoothMethPCAPlot(file = "/CHDS /DMRichR/Males/DM
 ##Replication Newborn Blood (ReCHARGE/ECHO) samples and DMRs ######################################
 setwd("/Smoothed methylation/CHARGE")
 CHARGEsamples_CHARGE_DMRs_combined <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
-                                                     sample_info = "ECHO_SampleInfo.xlsx",
+                                                     sample_info = "CHARGE_SampleInfo.xlsx",
                                                      name = "CHARGE_SmoothMeth_SexCombined.pdf")
 CHARGEsamples_CHARGE_DMRs_females <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
                                                      sample_info = "CHARGE_SampleInfo.xlsx",
-                                                     name = "ECHO_SmoothMeth_Females.pdf")
+                                                     name = "CHARGE_SmoothMeth_Females.pdf")
 CHARGEsamples_CHARGE_DMRs_males <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
                                                     sample_info = "CHARGE_SampleInfo.xlsx",
-                                                    name = "ECHO_SmoothMeth_Males.pdf")
+                                                    name = "CHARGE_SmoothMeth_Males.pdf")
 
 
 ### Cord Blood samples and DMRs ###########################################
