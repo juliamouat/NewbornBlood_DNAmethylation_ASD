@@ -123,14 +123,12 @@ CHDSsamples_CHDS_DMRs_combined <- SmoothMethPCAPlot2_Sex(file = "/CHDS /DMRichR/
                                                      sample_info = "CHDS_SampleInfo.xlsx",
                                                      name = "CHDS_SmoothMeth_SexCombined_Sex.pdf")
 
-
 ### Cord Blood samples and Cord Blood DMRs ###########################################
 setwd("/CHDS /Smoothed methylation/Cord Blood")
 #Cord Blood Sex Combined 
 CordSamples_CordDMRs_combined <- SmoothMethPCAPlot2_Sex(file = "/CHDS /CordBlood/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
                                                     sample_info = "CordBlood_SampleInfo.xlsx",
                                                     name = "CordBlood_SmoothMeth_SexCombined_Sex.pdf")
-
 
 ### Placenta samples and Placenta DMRs #########################################
 setwd("/CHDS /Smoothed methylation/Placenta")
