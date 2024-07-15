@@ -92,7 +92,7 @@ call="Rscript \
 --cutoff '0.05' \
 --testCovariate ASD_Diagnosis \
 --adjustCovariate 'Sex;Age' \
---sexCheck TRUE \
+--sexCheck FALSE \
 --GOfuncR TRUE \
 --EnsDb FALSE \
 --cellComposition FALSE \
