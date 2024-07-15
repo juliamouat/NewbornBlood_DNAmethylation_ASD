@@ -39,15 +39,15 @@ CHDSsamples_CHDS_DMRs_males <- SmoothMethPCAPlot(file = "/CHDS /DMRichR/Males/DM
                                                     name = "CHDS_SmoothMeth_Males.pdf")
 
 ##Replication Newborn Blood (ReCHARGE/ECHO) samples and DMRs ######################################
-setwd("/Smoothed methylation/ECHO")
-ECHOsamples_ECHO_DMRs_combined <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
+setwd("/Smoothed methylation/CHARGE")
+CHARGEsamples_CHARGE_DMRs_combined <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Combined/DMRs/DMR_individual_smoothed_methylation.txt",
                                                      sample_info = "ECHO_SampleInfo.xlsx",
-                                                     name = "ECHO_SmoothMeth_SexCombined.pdf")
-ECHOsamples_ECHO_DMRs_females <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
-                                                     sample_info = "ECHO_SampleInfo.xlsx",
+                                                     name = "CHARGE_SmoothMeth_SexCombined.pdf")
+CHARGEsamples_CHARGE_DMRs_females <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Females/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                     sample_info = "CHARGE_SampleInfo.xlsx",
                                                      name = "ECHO_SmoothMeth_Females.pdf")
-ECHOsamples_ECHO_DMRs_males <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
-                                                    sample_info = "ECHO_SampleInfo.xlsx",
+CHARGEsamples_CHARGE_DMRs_males <- SmoothMethPCAPlot(file = "/ReCHARGE:ECHO/DMRichR/Males/DMRs/DMR_individual_smoothed_methylation.txt",
+                                                    sample_info = "CHARGE_SampleInfo.xlsx",
                                                     name = "ECHO_SmoothMeth_Males.pdf")
 
 
@@ -88,6 +88,7 @@ CortexSamples_CortexDMRs_males <- SmoothMethPCAPlot(file = "/Cortex/DMRichR/Male
                                                        name = "Cortex_SmoothMeth_Males.pdf")
 
 # Supplemental Figure 2C #############################################################################
+
 ##Function to separate samples by sex (from Sex Combined analyses) instead of ASD Diagnosis
 SmoothMethPCAPlot2_Sex <- function(file, sample_info, name){
   x <- read.delim(file, header = TRUE, check.names = FALSE)
