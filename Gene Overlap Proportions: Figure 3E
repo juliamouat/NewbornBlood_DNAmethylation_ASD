@@ -1,4 +1,4 @@
-#Figure 2E: What proportion of autosomal DMR genes from ASD females vs TD males and from TD females vs ASD males were also called as autosomal DMR genes in the ASD females vs ASD males comparison in discovery newborn blood (CHDS)?
+# Figure 3E: What proportion of autosomal DMR genes from ASD females vs TD males and from TD females vs ASD males were also called as autosomal DMR genes in the ASD females vs ASD males comparison in discovery newborn blood (CHDS)?
 
 #Load Annotated DMRs from CHDS newborn blood 
 library(openxlsx)
