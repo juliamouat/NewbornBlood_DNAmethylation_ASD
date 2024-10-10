@@ -87,7 +87,7 @@ CortexSamples_CortexDMRs_males <- SmoothMethPCAPlot(file = "/Cortex/DMRichR/Male
                                                        sample_info = "Cortex_SampleInfo.xlsx",
                                                        name = "Cortex_SmoothMeth_Males.pdf")
 
-# Supplemental Figure 2C #############################################################################
+# Supplemental Figure #############################################################################
 
 ##Function to separate samples by sex (from Sex Combined analyses) instead of ASD Diagnosis
 SmoothMethPCAPlot2_Sex <- function(file, sample_info, name){
