@@ -10,14 +10,14 @@ AnnotationHub::setAnnotationHubOption("CACHE", value = "/share/lasallelab/progra
 #Get Smooth Methylation values from all CHDS samples over Female vs Male DMRs ###########################################################
 
 #TD Females vs TD Males DMRs
-load("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/SexCombined/V1/RData/bsseq.RData")
-DMRs_TDfemales_TDmales <- rtracklayer::import.bed("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/MaleBrain_IncoherentGenderHypothesis/TDfemales_TDmales/DMRs/DMRs.bed")
+load("/CHDS_NDBS/DMRichR/SexCombined/V1/RData/bsseq.RData")
+DMRs_TDfemales_TDmales <- rtracklayer::import.bed("/CHDS_NDBS/DMRichR/MaleBrain_IncoherentGenderHypothesis/TDfemales_TDmales/DMRs/DMRs.bed")
 AllSamples_TDfemalesTDmaleDMRs <- getMeth(bs.filtered.bsseq, regions = DMRs_TDfemales_TDmales, type = "smooth", what = "perRegion")
 write.xlsx(as.data.frame(AllSamples_TDfemalesTDmaleDMRs), "CHDSsamples_SmoothMethylation_TDfemalesTDmalesDMRs.xlsx", rowNames = TRUE, colNames = TRUE)
 
 #ASD Females vs ASD Males DMRs
-load("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/SexCombined/V1/RData/bsseq.RData")
-DMRs_ASDfemales_ASDmales <- rtracklayer::import.bed("/share/lasallelab/Jules/CHDS_NDBS/DMRichR/MaleBrain_IncoherentGenderHypothesis/ASDfemales_ASDmales/DMRs/DMRs.bed")
+load("/CHDS_NDBS/DMRichR/SexCombined/V1/RData/bsseq.RData")
+DMRs_ASDfemales_ASDmales <- rtracklayer::import.bed("/CHDS_NDBS/DMRichR/MaleBrain_IncoherentGenderHypothesis/ASDfemales_ASDmales/DMRs/DMRs.bed")
 AllSamples_ASDfemalesASDmaleDMRs <- getMeth(bs.filtered.bsseq, regions = DMRs_ASDfemales_ASDmales, type = "smooth", what = "perRegion")
 write.xlsx(as.data.frame(AllSamples_ASDfemalesASDmaleDMRs), "CHDSsamples_SmoothMethylation_ASDfemalesASDmalesDMRs.xlsx", rowNames = TRUE, colNames = TRUE)
 
