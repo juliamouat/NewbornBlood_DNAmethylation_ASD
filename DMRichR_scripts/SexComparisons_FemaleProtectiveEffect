@@ -1,6 +1,6 @@
 #Discovery Newborn Blood (CHDS) ###########################################################
 
-# Supplemental Table 14: TD Females vs TD Males
+# TD Females vs TD Males
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
@@ -17,7 +17,7 @@ call="Rscript \
 --EnsDb FALSE \
 --cores 20"
 
-# Supplemental Table 15: ASD Females vs ASD Males
+# ASD Females vs ASD Males
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM.R \
@@ -34,7 +34,7 @@ call="Rscript \
 --EnsDb FALSE \
 --cores 20"
 
-#ASD Females vs TD Males
+# ASD Females vs TD Males
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM_new.R \
@@ -51,7 +51,7 @@ call="Rscript \
 --EnsDb FALSE \
 --cores 20"
 
-#TD Females vs ASD Males
+# TD Females vs ASD Males
 call="Rscript \
 --vanilla \
 /share/lasallelab/programs/DMRichR/DM_new.R \
