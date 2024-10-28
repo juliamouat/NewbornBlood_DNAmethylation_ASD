@@ -88,7 +88,7 @@ DMRGeneNameOverlap <- function(A, B, C, D){
 
 
 
-# Supplemental Table 20: NDBS Replication ##############################
+# NDBS Replication ##############################
 setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/NDBS Replication")
 
 NDBS_Replication_Combined <- DMRGeneNameOverlap(A = CHDS_Combined_DMR_Genes, B = ECHO_Combined_DMR_Genes, C = CHDS_Combined_Universe_Genes, D = ECHO_Combined_Universe_Genes)
@@ -109,7 +109,7 @@ StatsDataFrame3(NDBS_Replication_Combined, NDBS_Replication_Females, NDBS_Replic
 
 
 
-# Supplemental Table 13: Females x Males for each tissue ################
+# Females x Males for each tissue ################
 
 setwd("/CHDS /DMR_Overlap/GeneName_Overlap_Stats/Females x Males")
 
@@ -133,7 +133,7 @@ StatsDataFrame5(L1 = CHDS_Female_Male, L2 = ECHO_Female_Male, L3 = Cord_Female_M
 
 
 
-# Supplemental Table 16: Female Protective Effect, Discovery Newborn Blood (CHDS) ##################
+# Female Protective Effect, Discovery Newborn Blood (CHDS) ##################
 
 setwd("/CHDS /DMRichR/MaleBrain_IncoherentGenderHypothesis/Overlap_DMRs/GeneNameOverlap_Stats")
 
@@ -148,7 +148,7 @@ StatsDataFrame(L1, L2, L3, L4, L5, L6,
                file = "MaleBrain_GenderIncoherence_GeneName_Overlap_Stats.xlsx")
 
 
-# Supplemental Table 21: Tissue Comparisons #############################################################################################
+# Tissue Comparisons #############################################################################################
 
 StatsDataFrame6 <- function(L1, L2, L3, L4, L5, L6, ColumnNames, file){
   RowNames <- list("Jaccard Index", "Odds Ratio", "P Value")
